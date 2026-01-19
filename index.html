@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cheat Sheet de Clase | CMD, PowerShell & Git</title>
+    <link rel="stylesheet" href="./index.css">
+</head>
+<body>
+
+    <aside>
+        <h2>🛠️ Atajo de Comandos</h2>
+        <button class="tab-btn active" onclick="openSection('cmd')">🟢 CMD</button>
+        <button class="tab-btn" onclick="openSection('powershell')">🟢 PowerShell</button>
+        <button class="tab-btn" onclick="openSection('git')">🟢 Git & GitHub</button>
+        <button class="tab-btn" onclick="openSection('guia')">🟢 Guia clase</button>
+
+    </aside>
+
+    <main>
+        <section id="cmd" class="content-section active">
+            <h1>Comandos Útiles de CMD</h1>
+            
+            <h3>Información y Ayuda</h3>
+            <div class="command-card">
+                <h2># HELP</h2>
+                <p>Muestra una lista de todos los comandos disponibles o ayuda específica para uno.</p>
+                <code>help</code>
+                <code style="margin: 5px 0;">help cd</code>
+            </div>
+
+            <div class="command-card">
+                <h2># CLS (Clear Screen)</h2>
+                <p>Limpia todo el texto de la terminal para empezar de cero visualmente.</p>
+                <code>cls</code>
+            </div>
+
+            <h3>Navegación de Directorios</h3>
+            <div class="command-card">
+                <h2># CD (Change Directory)</h2>
+                <p>Cambia a la carpeta especificada. Usa <code>..</code> para subir un nivel.</p>
+                <code>cd Documentos/Proyectos</code>
+                <code style="margin: 5px 0;">cd ..</code>
+                <code style="margin: 5px 0;">cd C:\Users\Desktop</code>
+            </div>
+
+            <div class="command-card">
+                <h2># DIR</h2>
+                <p>Lista todos los archivos y carpetas dentro del directorio actual.</p>
+                <code>dir</code>
+            </div>
+
+            <h3>Gestión de Archivos y Carpetas</h3>
+            <div class="command-card">
+                <h2># MKDIR / MD</h2>
+                <p>Crea una nueva carpeta o directorio.</p>
+                <code>mkdir nueva_carpeta</code>
+                <code style="margin: 5px 0;">md nueva_carpeta</code>
+            </div>
+
+            <div class="command-card">
+                <h2># TYPE / ECHO</h2>
+                <p><code>echo</code> escribe texto o crea archivos. <code>type</code> lee el contenido de un archivo.</p>
+                <code>echo contenido > hola.txt</code>
+                <code style="margin: 5px 0;">type hola.txt</code>
+            </div>
+
+            <div class="command-card">
+                <h2># DEL / RMDIR</h2>
+                <p><code>del</code> borra archivos. <code>rmdir /s</code> borra una carpeta y todo su contenido.</p>
+                <code>del archivo.txt</code>
+                <code style="margin: 5px 0;">rmdir /s nombre_carpeta</code>
+            </div>
+
+            <div class="command-card">
+                <h2># MOVE / REN</h2>
+                <p>Mueve archivos a otra ruta o cambia el nombre de un archivo/carpeta.</p>
+                <code>ren nombre_viejo.txt nombre_nuevo.txt</code>
+                <code style="margin: 5px 0;">move archivo.txt ./nueva_ubicacion/</code>
+            </div>
+
+            <h3>Extras de Desarrollador</h3>
+            <div class="command-card">
+                <h2># CODE .</h2>
+                <p>Comando muy útil en clase: abre la carpeta actual directamente en Visual Studio Code.</p>
+                <code>code .</code>
+            </div>
+
+            <div class="command-card">
+                <h2># EXPLORER .</h2>
+                <p>Abre la ventana del explorador de archivos de Windows en la carpeta actual.</p>
+                <code>explorer .</code>
+            </div>
+        </section>
+
+        <section id="powershell" class="content-section">
+            <h1>PowerShell (Consola Avanzada)</h1>
+            <p style="background: #e8f4fd; padding: 15px; border-radius: 8px; border-left: 5px solid #3498db;">
+                <strong>💡 Diferencia Clave:</strong> A diferencia de CMD, PowerShell no solo maneja texto, sino <strong>objetos</strong>. 
+                Utiliza una estructura de <code>Verbo-Sustantivo</code> y posee "Aliases" que nos permiten usar comandos de Linux.
+            </p>
+
+            <h3>Ayuda e Información</h3>
+            <div class="command-card">
+                <h2># GET-HELP</h2>
+                <p>El equivalente a help, pero mucho más detallado. Puedes usar <code>-Online</code> para abrir la documentación en el navegador.</p>
+                <code>Get-Help Get-Service</code>
+                <code style="margin: 5px 0;">Get-Help Set-ExecutionPolicy -Online</code>
+            </div>
+
+            <div class="command-card">
+                <h2># GET-COMMAND</h2>
+                <p>Busca cualquier comando, función o alias instalado en el sistema.</p>
+                <code>Get-Command *network*</code>
+            </div>
+
+            <h3>Navegación y Archivos (Aliases)</h3>
+            <div class="command-card">
+                <h2># LS / DIR / GCI</h2>
+                <p>En PowerShell, <code>ls</code> y <code>dir</code> son alias de <code>Get-ChildItem</code>. Muestra el contenido del directorio con más detalle.</p>
+                <code>ls</code>
+                <code style="margin: 5px 0;">Get-ChildItem -Hidden</code>
+            </div>
+
+            <div class="command-card">
+                <h2># NEW-ITEM (Crear archivos/carpetas)</h2>
+                <p>A diferencia de <code>mkdir</code>, este comando es universal para crear cualquier tipo de objeto (archivos o carpetas).</p>
+                <code>New-Item -Path "proyecto" -ItemType Directory</code>
+                <code style="margin: 5px 0;">New-Item -Path "log.txt" -ItemType File</code>
+            </div>
+
+            <div class="command-card">
+                <h2># CAT / GET-CONTENT</h2>
+                <p>Muestra el contenido de un archivo. <code>cat</code> es el alias de Linux que funciona aquí.</p>
+                <code>cat config.json</code>
+                <code style="margin: 5px 0;">Get-Content indices.txt -TotalCount 10</code>
+            </div>
+
+            <h3>Seguridad y Scripts</h3>
+            <div class="command-card">
+                <h2># SET-EXECUTIONPOLICY</h2>
+                <p><strong>Vital para desarrolladores:</strong> Por defecto, Windows bloquea scripts. Este comando permite ejecutarlos (necesitas modo administrador).</p>
+                <code>Set-ExecutionPolicy RemoteSigned</code>
+            </div>
+
+            <h3>Utilidades de Red y Procesos</h3>
+            <div class="command-card">
+                <h2># TEST-CONNECTION (Ping pro)</h2>
+                <p>El equivalente avanzado a <code>ping</code>.</p>
+                <code>Test-Connection google.com</code>
+            </div>
+
+            <div class="command-card">
+                <h2># GET-PROCESS</h2>
+                <p>Muestra todos los procesos activos. Muy útil para ver qué está consumiendo memoria o detener un servidor trabado.</p>
+                <code>Get-Process | Where-Object {$_.CPU -gt 10}</code>
+                <code style="margin: 5px 0;">Stop-Process -Name "node"</code>
+            </div>
+
+            <div class="command-card">
+                <h2># SELECT-STRING (Grep)</h2>
+                <p>Busca un texto específico dentro de archivos (ideal para buscar logs de errores).</p>
+                <code>Select-String -Path "*.log" -Pattern "Error"</code>
+            </div>
+        </section>
+
+        <section id="git" class="content-section">
+            <h1>Git & GitHub: Control de Versiones</h1>
+            
+            <p style="background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 5px solid #ff9800;">
+                <strong>Concepto clave:</strong> Git no guarda "fotos" de tus archivos, guarda <strong>cambios</strong>. El flujo principal es: <br>
+                <code>Working Directory</code> (Carpeta) → <code>Staging Area</code> (Preparación) → <code>Local Repo</code> (Historial).
+            </p>
+
+            <h3>Enlaces</h3>
+            <ul>
+                <li><a href="https://git-scm.com/">Instalar Git</a></li>
+                <li><a href="https://github.com/">GitHub</a></li>
+            </ul>
+
+            <h3>Configuración e Inicio</h3>
+            
+            <div class="command-card">
+                <h2>Versión de git</h2>
+                <code>git version</code>
+            </div>
+
+            <div class="command-card">
+                <h2># GIT INIT</h2>
+                <p>Crea un nuevo repositorio local en la carpeta donde estás parado. Aparecerá la carpeta oculta <code>.git</code>.</p>
+                <code>git init</code>
+            </div>
+
+            <div class="command-card">
+                <h2># GIT CONFIG</h2>
+                <p>Configura tu identidad (nombre y correo) para que Git sepa quién hizo cada cambio.</p>
+                <code>git config --global user.name "Tu Nombre"</code>
+                <code style="margin: 5px 0;">git config --global user.email "tu@email.com"</code>
+            </div>
+
+            <h3>El Ciclo de Vida del Archivo</h3>
+            
+            
+            <div class="command-card">
+                <h2># GIT STATUS</h2>
+                <p>El comando más importante: te dice qué archivos han cambiado y cuáles están listos para ser guardados.</p>
+                <code>git status</code>
+            </div>
+
+            <div class="command-card">
+                <h2># GIT ADD</h2>
+                <p>Mueve tus cambios al <strong>Staging Area</strong> (la zona de preparación antes del commit).</p>
+                <code>git add nombre_archivo.txt</code>
+                <code style="margin: 5px 0;">git add . (Agrega todo lo pendiente)</code>
+            </div>
+
+            <div class="command-card">
+                <h2># GIT COMMIT</h2>
+                <p>Guarda tus cambios en el historial con un mensaje descriptivo.</p>
+                <code>git commit -m "Añadido el login de usuario"</code>
+            </div>
+
+            <h3>Viaje en el Tiempo y Deshacer</h3>
+            <div class="command-card">
+                <h2># GIT RESET --HARD (Volver atrás)</h2>
+                <p>Mueve el puntero de tu rama a un commit anterior. <strong>Cuidado:</strong> Los commits que estaban "delante" del que elijas se borrarán del historial actual.</p>
+                <code>git reset --hard id_del_commit</code>
+                
+                <div class="diagram-area" style="background: #fdfdfd; padding: 20px; border: 1px solid #eee; border-radius: 8px; margin-top: 15px;">
+                    <strong>Representación Visual:</strong>
+                    
+                    <p style="font-size: 0.85rem; color: #666; font-style: italic;">
+                        Al hacer reset al círculo 2, el círculo 3 (el más nuevo) desaparece y tu proyecto vuelve a estar exactamente como estaba en el 2.
+                    </p>
+                </div>
+            </div>
+
+            <div class="command-card">
+                <h2># GIT LOG</h2>
+                <p>Muestra la lista de commits realizados con sus IDs (hashes), autor y fecha.</p>
+                <code>git log --oneline (Versión resumida)</code>
+            </div>
+
+            <h3>Ramificaciones (Branching)</h3>
+            <div class="command-card">
+                <h2># GIT BRANCH / CHECKOUT</h2>
+                <p>Las ramas te permiten trabajar en nuevas funciones sin romper el código principal (main).</p>
+                <code>git branch nombre-rama (Crea la rama)</code>
+                <code style="margin: 5px 0;">git checkout nombre-rama (Entra en la rama)</code>
+                
+                
+            </div>
+
+            <div class="command-card">
+                <h2># GIT MERGE</h2>
+                <p>Une los cambios de una rama secundaria con la rama principal.</p>
+                <code>git merge nombre-de-la-rama</code>
+                
+            </div>
+
+            <h3>Remotos (GitHub)</h3>
+            <div class="command-card">
+                <h2># GIT PUSH / PULL</h2>
+                <p><code>Push</code> sube tus commits locales a GitHub. <code>Pull</code> descarga los cambios de GitHub a tu PC.</p>
+                <code>git push origin main</code>
+                <code style="margin: 5px 0;">git pull origin main</code>
+            </div>
+
+            <div class="command-card">
+                <h2># GIT REMOTE ADD</h2>
+                <p>Vincula tu repositorio local con un repositorio vacío en GitHub.</p>
+                <code>git remote add origin https://github.com/usuario/repo.git</code>
+            </div>
+        </section>
+
+        <section id="guia" class="content-section">
+            <h1>Guia de clase - git</h1>
+
+            <h3>Enlaces</h3>
+            <ul>
+                <li><a href="https://git-scm.com/">Instalar Git</a></li>
+                <li><a href="https://github.com/">GitHub</a></li>
+            </ul>
+
+            <h3>Configuración e Inicio</h3>
+            
+            <div class="command-card">
+                <h2>Versión de git</h2>
+                <code>git version</code>
+            </div>
+
+            <div class="command-card">
+                <h2># GIT INIT</h2>
+                <p>Crea un nuevo repositorio local en la carpeta donde estás parado. Aparecerá la carpeta oculta <code>.git</code>.</p>
+                <code style="margin: 5px 0;">git init</code>
+            </div>
+            
+            <div class="command-card">
+                <h2># GIT STATUS</h2>
+                <p>El comando más importante: te dice qué archivos han cambiado y cuáles están listos para ser guardados.</p>
+                <code>git status</code>
+                <code style="margin: 5px 0;">git status -s</code>
+            </div>
+
+            <div class="command-card">
+                <h2># GIT ADD</h2>
+                <p>Mueve tus cambios al <strong>Staging Area</strong> (la zona de preparación antes del commit).</p>
+                <code>git add nombre_archivo.txt</code>
+                <code style="margin: 5px 0;">git add . (Agrega todo lo pendiente)</code>
+            </div>
+            
+            <div class="command-card">
+                <h2># GIT COMMIT</h2>
+                <p>Guarda tus cambios en el historial con un mensaje descriptivo.</p>
+                <code>git commit -m "Añadido el login de usuario"</code>
+            </div>
+            
+            <div class="command-card">
+                <h2># GIT LOG</h2>
+                <p>Muestra la lista de commits realizados con sus IDs (hashes), autor y fecha.</p>
+                <code>git log --oneline (Versión resumida)</code>
+            </div>
+            
+            <div class="command-card">
+                <h2># GIT CONFIG</h2>
+                <p>Configura tu identidad (nombre y correo) para que Git sepa quién hizo cada cambio.</p>
+                <code>git config --global user.name "Tu Nombre"</code>
+                <code style="margin: 5px 0;">git config --global user.email "tu@email.com"</code>
+            </div>
+
+            <h3>El Ciclo de Vida del Archivo</h3>       
+                
+            <h3>Viaje en el Tiempo y Deshacer</h3>
+            <div class="command-card">
+                <h2># GIT RESET --HARD (Volver atrás)</h2>
+                <p>Mueve el puntero de tu rama a un commit anterior. <strong>Cuidado:</strong> Los commits que estaban "delante" del que elijas se borrarán del historial actual.</p>
+                <code>git reset --hard id_del_commit</code>
+                
+                <div class="diagram-area" style="background: #fdfdfd; padding: 20px; border: 1px solid #eee; border-radius: 8px; margin-top: 15px;">
+                    <strong>Representación Visual:</strong>
+                    
+                    <p style="font-size: 0.85rem; color: #666; font-style: italic;">
+                        Al hacer reset al círculo 2, el círculo 3 (el más nuevo) desaparece y tu proyecto vuelve a estar exactamente como estaba en el 2.
+                    </p>
+                </div>
+            </div>
+
+
+            <h3>Ramificaciones (Branching)</h3>
+            <div class="command-card">
+                <h2># GIT BRANCH / CHECKOUT</h2>
+                <p>Las ramas te permiten trabajar en nuevas funciones sin romper el código principal (main).</p>
+                <code>git branch nombre-rama (Crea la rama)</code>
+                <code style="margin: 5px 0;">git checkout nombre-rama (Entra en la rama)</code>
+                
+                
+            </div>
+
+            <div class="command-card">
+                <h2># GIT MERGE</h2>
+                <p>Une los cambios de una rama secundaria con la rama principal.</p>
+                <code>git merge nombre-de-la-rama</code>
+                
+            </div>
+
+            <h3>Remotos (GitHub)</h3>
+            <div class="command-card">
+                <h2># GIT PUSH / PULL</h2>
+                <p><code>Push</code> sube tus commits locales a GitHub. <code>Pull</code> descarga los cambios de GitHub a tu PC.</p>
+                <code>git push origin main</code>
+                <code style="margin: 5px 0;">git pull origin main</code>
+            </div>
+
+            <div class="command-card">
+                <h2># GIT REMOTE ADD</h2>
+                <p>Vincula tu repositorio local con un repositorio vacío en GitHub.</p>
+                <code>git remote add origin https://github.com/usuario/repo.git</code>
+            </div>
+        </section>
+    </main>
+
+    <script src="./indes.js"></script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+:root {
+  --sidebar-width: 260px;
+  --bg-color: #f0f2f5;
+  --primary: #2c3e50;
+  --accent: #27ae60; /* Verde para diferenciar Git/Terminal */
+  --code-bg: #282c34;
+  --code-text: #abb2bf;
+}
+
+body {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  margin: 0;
+  display: flex;
+  background: var(--bg-color);
+}
+
+/* Barra Lateral */
+aside {
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--primary);
+  color: white;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+aside h2 {
+  padding: 20px;
+  font-size: 1.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 0;
+}
+
+.tab-btn {
+  padding: 18px 25px;
+  border: none;
+  background: none;
+  color: #bdc3c7;
+  text-align: left;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.tab-btn.active {
+  background: var(--accent);
+  color: white;
+  font-weight: bold;
+}
+
+/* Contenedor Principal */
+main {
+  margin-left: var(--sidebar-width);
+  padding: 40px;
+  width: 100%;
+}
+
+.content-section {
+  display: none;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.content-section.active {
+  display: block;
+}
+
+h1 {
+  color: var(--primary);
+  border-bottom: 3px solid var(--accent);
+  padding-bottom: 10px;
+}
+h3 {
+  color: #7f8c8d;
+  margin-top: 30px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+/* Tarjetas de Comando */
+.command-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border-left: 5px solid #dcdde1;
+  transition: transform 0.2s;
+}
+
+.command-card:hover {
+  transform: translateX(5px);
+  border-left-color: var(--accent);
+}
+
+.command-card h2 {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+  color: #2980b9;
+}
+.command-card p {
+  margin: 0 0 15px 0;
+  color: #57606f;
+  line-height: 1.5;
+}
+
+a {
+  color: #2980b9;
+}
+code {
+  display: block;
+  background: var(--code-bg);
+  color: #61afef; /* Color estilo VS Code */
+  padding: 12px;
+  border-radius: 6px;
+  font-family: "Consolas", monospace;
+  font-size: 0.95rem;
+  position: relative;
+}
+
+code::before {
+  content: ">";
+  margin-right: 10px;
+  color: var(--accent);
+}
