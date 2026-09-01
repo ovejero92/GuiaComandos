@@ -9,6 +9,9 @@ function openSection(id, buttonEl) {
   if (id === "git" && typeof window.__gitVizRefresh === "function") {
     requestAnimationFrame(() => window.__gitVizRefresh());
   }
+  if (id === "simulador") {
+    requestAnimationFrame(() => document.getElementById("sim-input")?.focus());
+  }
 }
 
 /**
@@ -395,4 +398,176 @@ function initGitScrollViz() {
 
 document.addEventListener("DOMContentLoaded", () => {
   initGitScrollViz();
+  renderGitReference();
+  enhanceAllCommandBlocks();
 });
+
+/* ─── Copiar comandos (texto limpio, sin el prefijo >) ─── */
+
+function copyText(text, btn) {
+  const clean = text.trim();
+  navigator.clipboard.writeText(clean).then(() => {
+    const prev = btn.textContent;
+    btn.textContent = "✓";
+    btn.classList.add("btn-copy--ok");
+    setTimeout(() => {
+      btn.textContent = prev;
+      btn.classList.remove("btn-copy--ok");
+    }, 1400);
+  });
+}
+
+function buildCmdLine(text, opts) {
+  opts = opts || {};
+  const wrap = document.createElement("div");
+  wrap.className = "cmd-line" + (opts.git ? " cmd-line--git" : "");
+
+  const prompt = document.createElement("span");
+  prompt.className = "cmd-prompt";
+  prompt.textContent = ">";
+
+  const code = document.createElement("code");
+  code.className = "cmd-text";
+  code.textContent = text;
+
+  const actions = document.createElement("div");
+  actions.className = "cmd-actions";
+
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "btn-copy";
+  copyBtn.title = "Copiar comando";
+  copyBtn.textContent = "📋";
+  copyBtn.addEventListener("click", () => copyText(text, copyBtn));
+  actions.appendChild(copyBtn);
+
+  if (opts.desc) {
+    const descBtn = document.createElement("button");
+    descBtn.type = "button";
+    descBtn.className = "btn-desc";
+    descBtn.title = "Qué hace este comando";
+    descBtn.textContent = "▽";
+    descBtn.setAttribute("aria-expanded", "false");
+
+    const descPanel = document.createElement("p");
+    descPanel.className = "cmd-desc";
+    descPanel.hidden = true;
+    descPanel.textContent = opts.desc;
+
+    descBtn.addEventListener("click", () => {
+      const open = descPanel.hidden;
+      descPanel.hidden = !open;
+      descBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      descBtn.textContent = open ? "△" : "▽";
+    });
+    actions.appendChild(descBtn);
+    wrap.appendChild(prompt);
+    wrap.appendChild(code);
+    wrap.appendChild(actions);
+    wrap.appendChild(descPanel);
+  } else {
+    wrap.appendChild(prompt);
+    wrap.appendChild(code);
+    wrap.appendChild(actions);
+  }
+  return wrap;
+}
+
+function enhanceCodeElement(codeEl, opts) {
+  if (codeEl.closest(".cmd-line") || codeEl.classList.contains("inline-code")) return;
+  const text = codeEl.textContent.replace(/^>\s*/, "").trim();
+  const line = buildCmdLine(text, opts);
+  codeEl.replaceWith(line);
+}
+
+function enhanceAllCommandBlocks() {
+  document.querySelectorAll(".command-card > code, .git-viz-step > code").forEach((el) => {
+    enhanceCodeElement(el);
+  });
+}
+
+/* ─── Referencia Git con descripciones ─── */
+
+const GIT_REF_SECTIONS = [
+  {
+    title: "Configuración e identidad",
+    commands: [
+      { cmd: "git --version", desc: "Muestra la versión instalada de Git." },
+      { cmd: 'git config --global user.name "Tu Nombre"', desc: "Tu nombre aparecerá como autor en cada commit." },
+      { cmd: 'git config --global user.email "tu@email.com"', desc: "Email vinculado a tus commits (debe coincidir con GitHub si usas verificación)." },
+      { cmd: "git config --global init.defaultBranch main", desc: "Las repos nuevas usarán main como rama principal por defecto." },
+    ],
+  },
+  {
+    title: "Repositorio local",
+    commands: [
+      { cmd: "git init", desc: "Convierte la carpeta actual en repositorio Git (crea la carpeta oculta .git)." },
+      { cmd: "git status", desc: "Resume archivos modificados, en staging y sin seguimiento." },
+      { cmd: "git status -s", desc: "Misma información en formato corto (ideal para escaneo rápido)." },
+      { cmd: "git add archivo.txt", desc: "Envía un archivo concreto al área de staging (preparación)." },
+      { cmd: "git add .", desc: "Añade todos los cambios pendientes del directorio al staging." },
+      { cmd: 'git commit -m "mensaje"', desc: "Guarda una instantánea del staging en el historial con un mensaje." },
+      { cmd: "git log", desc: "Lista commits con autor, fecha e ID completo." },
+      { cmd: "git log --oneline --graph --decorate --all", desc: "Historial compacto con ramas y fusiones dibujadas en texto." },
+    ],
+  },
+  {
+    title: "Deshacer y comparar",
+    commands: [
+      { cmd: "git diff", desc: "Muestra líneas cambiadas que aún no están en staging." },
+      { cmd: "git restore archivo.txt", desc: "Descarta cambios locales en el archivo (vuelve al último commit)." },
+      { cmd: "git restore --staged archivo.txt", desc: "Quita el archivo del staging pero mantiene cambios en disco." },
+      { cmd: "git reset --soft HEAD~1", desc: "Deshace el último commit pero deja los cambios en staging." },
+      {
+        cmd: "git reset --hard <commit>",
+        desc: "Mueve la rama al commit indicado y BORRA cambios locales posteriores. Solo en historial privado/no compartido.",
+      },
+      {
+        cmd: "git revert <commit>",
+        desc: "Crea un commit nuevo que deshace otro, sin reescribir historial. Preferido si ya hiciste push o trabajas en equipo.",
+      },
+    ],
+  },
+  {
+    title: "Ramas",
+    commands: [
+      { cmd: "git branch", desc: "Lista ramas locales; la activa lleva asterisco (*)." },
+      { cmd: "git branch nombre", desc: "Crea una rama nueva apuntando al commit actual (no cambia HEAD)." },
+      { cmd: "git switch nombre", desc: "Cambia a otra rama (actualiza archivos del directorio de trabajo)." },
+      { cmd: "git switch -c nombre", desc: "Crea la rama y cambia a ella en un solo paso." },
+      { cmd: "git checkout nombre", desc: "Forma clásica de cambiar de rama (equivalente a switch en casos simples)." },
+      { cmd: "git merge nombre", desc: "Integra otra rama en la rama actual (puede crear commit de merge)." },
+      { cmd: "git branch -d nombre", desc: "Borra rama ya fusionada (solo el puntero, no los commits alcanzables)." },
+      { cmd: "git branch -D nombre", desc: "Fuerza borrado de rama aunque no esté fusionada." },
+    ],
+  },
+  {
+    title: "Remoto (GitHub)",
+    commands: [
+      { cmd: "git clone https://github.com/usuario/repo.git", desc: "Descarga un repo completo con historial y remoto origin." },
+      { cmd: "git remote -v", desc: "Lista URLs de remotos configurados (fetch/push)." },
+      { cmd: "git remote add origin https://github.com/usuario/repo.git", desc: "Vincula tu repo local con uno vacío en GitHub." },
+      { cmd: "git fetch origin", desc: "Trae commits y ramas del remoto sin fusionarlos aún." },
+      { cmd: "git pull origin main", desc: "Descarga y fusiona cambios de main en tu rama actual." },
+      { cmd: "git push -u origin main", desc: "Sube commits y deja main local enlazada con origin/main." },
+      { cmd: "git push origin --delete rama-remota", desc: "Elimina una rama en GitHub (tras mergear un PR, por ejemplo)." },
+    ],
+  },
+];
+
+function renderGitReference() {
+  const root = document.getElementById("git-ref-root");
+  if (!root) return;
+  root.innerHTML = "";
+  GIT_REF_SECTIONS.forEach((section) => {
+    const h3 = document.createElement("h3");
+    h3.textContent = section.title;
+    root.appendChild(h3);
+    const card = document.createElement("div");
+    card.className = "command-card command-card--git-ref";
+    section.commands.forEach((item) => {
+      card.appendChild(buildCmdLine(item.cmd, { git: true, desc: item.desc }));
+    });
+    root.appendChild(card);
+  });
+}

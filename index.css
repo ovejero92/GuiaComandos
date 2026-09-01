@@ -108,17 +108,109 @@ h3 {
 }
 .command-card p {
   margin: 0 0 15px 0;
-  color: #57606f;
+  color: #ffffff;
   line-height: 1.5;
 }
 
 a {
   color: #2980b9;
 }
+
+/* Línea de comando con copiar (sin ::before que ensucia el copiado) */
+.cmd-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  background: var(--code-bg);
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.cmd-line:last-child {
+  margin-bottom: 0;
+}
+
+.cmd-prompt {
+  color: var(--accent);
+  font-family: "Consolas", monospace;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.cmd-text,
+code.cmd-text {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  color: #61afef;
+  padding: 0;
+  margin: 0;
+  font-family: "Consolas", monospace;
+  font-size: 0.95rem;
+  display: block;
+  word-break: break-all;
+}
+
+.cmd-text::before,
+code.cmd-text::before {
+  display: none;
+}
+
+.cmd-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.btn-copy,
+.btn-desc {
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ecf0f1;
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1;
+  transition: background 0.2s;
+}
+
+.btn-copy:hover,
+.btn-desc:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-copy--ok {
+  background: var(--accent) !important;
+}
+
+.cmd-desc {
+  flex-basis: 100%;
+  margin: 4px 0 0 0;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  color: #abb2bf;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.command-card--git-ref {
+  padding: 16px;
+}
+
+.command-card--git-ref .cmd-line {
+  margin-bottom: 10px;
+}
+
+/* Legacy: code sueltos dentro de párrafos */
 code {
   display: block;
   background: var(--code-bg);
-  color: #61afef; /* Color estilo VS Code */
+  color: #61afef;
   padding: 12px;
   border-radius: 6px;
   font-family: "Consolas", monospace;
@@ -126,10 +218,11 @@ code {
   position: relative;
 }
 
-code::before {
-  content: ">";
-  margin-right: 10px;
-  color: var(--accent);
+.command-card > p code,
+.command-card p .inline-code {
+  display: inline;
+  padding: 2px 6px;
+  font-size: 0.9em;
 }
 
 /* Git: referencia compacta (varios comandos en una tarjeta) */
@@ -198,8 +291,247 @@ code::before {
 }
 
 /* Git interactivo: columna fija con el grafo */
-section#git.content-section {
+section#git.content-section,
+section#simulador.content-section {
   max-width: 1120px;
+}
+
+.content-section--wide {
+  max-width: 1120px !important;
+}
+
+.intro-callout--sim {
+  background: #e8f8f0;
+  border-left: 5px solid var(--accent);
+  padding: 15px;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+/* ─── Simulador ─── */
+.sim-toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.sim-btn {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.sim-btn--help {
+  background: #3498db;
+  color: white;
+}
+
+.sim-btn--reset {
+  background: #e74c3c;
+  color: white;
+}
+
+.sim-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 16px;
+  min-height: 380px;
+}
+
+.sim-panel {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.sim-panel-title {
+  margin: 0;
+  padding: 12px 16px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7f8c8d;
+  background: #f8f9fa;
+  border-bottom: 1px solid #eee;
+}
+
+.sim-panel-path {
+  margin: 0;
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  color: #95a5a6;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.sim-explorer {
+  padding: 12px 8px;
+  max-height: 340px;
+  overflow-y: auto;
+  font-family: Consolas, monospace;
+  font-size: 0.85rem;
+}
+
+.sim-tree-item {
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sim-tree-item--active {
+  background: #e8f8f0;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.sim-log {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  font-family: Consolas, monospace;
+  font-size: 0.88rem;
+  padding: 14px;
+  min-height: 280px;
+  max-height: 340px;
+  overflow-y: auto;
+  line-height: 1.45;
+}
+
+.sim-line--cmd {
+  color: #9cdcfe;
+}
+
+.sim-line--err {
+  color: #f48771;
+}
+
+.sim-line--system {
+  color: #6a9955;
+  font-style: italic;
+}
+
+.sim-form {
+  border-top: 1px solid #333;
+  background: #1e1e1e;
+  padding: 10px 14px;
+}
+
+.sim-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sim-prompt {
+  color: #4ec9b0;
+  font-family: Consolas, monospace;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.sim-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-family: Consolas, monospace;
+  font-size: 0.88rem;
+  outline: none;
+}
+
+.sim-help-panel {
+  margin-top: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.sim-practice-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px 0;
+}
+
+.sim-practice-list li {
+  margin: 0;
+}
+
+.sim-chip {
+  background: #ecf0f1;
+  border: 1px solid #bdc3c7;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: Consolas, monospace;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.sim-chip:hover {
+  background: #e8f8f0;
+  border-color: var(--accent);
+}
+
+.sim-reset-vs-revert {
+  background: #fff8e6;
+  border-left: 4px solid #f39c12;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 0.92rem;
+}
+
+.sim-reset-vs-revert h4 {
+  margin: 0 0 8px 0;
+}
+
+.sim-reset-vs-revert ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.sim-help-text {
+  font-size: 0.92rem;
+  color: #57606f;
+  line-height: 1.55;
+}
+
+.sim-help-error {
+  color: #c0392b;
+}
+
+.sim-panel--graph {
+  margin-top: 16px;
+  padding-bottom: 12px;
+}
+
+.sim-panel--graph #sim-git-graph {
+  padding: 12px 16px;
+}
+
+.sim-graph-row {
+  font-size: 0.88rem;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.sim-graph-br {
+  color: #9b59b6;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 960px) {
+  .sim-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 .git-interactive-zone {

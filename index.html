@@ -13,7 +13,7 @@
         <button type="button" id="tab-cmd" class="tab-btn active" onclick="openSection('cmd', this)">CMD</button>
         <button type="button" id="tab-powershell" class="tab-btn" onclick="openSection('powershell', this)">PowerShell</button>
         <button type="button" id="tab-git" class="tab-btn" onclick="openSection('git', this)">Git y GitHub</button>
-        <button type="button" id="tab-guia" class="tab-btn" onclick="openSection('guia', this)">Guía clase</button>
+        <button type="button" id="tab-simulador" class="tab-btn" onclick="openSection('simulador', this)">Simulador</button>
     </aside>
 
     <main>
@@ -180,58 +180,7 @@
             <h2 class="section-title-git">1. Referencia: comandos (orden sugerido para estudiar)</h2>
             <p class="muted">Primero una lista clara; más abajo, la guía interactiva con el mismo panel gráfico para commits y ramas.</p>
 
-            <h3>Configuración e identidad</h3>
-            <div class="command-card command-card--compact">
-                <code>git --version</code>
-                <code>git config --global user.name "Tu Nombre"</code>
-                <code>git config --global user.email "tu@email.com"</code>
-                <code>git config --global init.defaultBranch main</code>
-            </div>
-
-            <h3>Repositorio local</h3>
-            <div class="command-card command-card--compact">
-                <code>git init</code>
-                <code>git status</code>
-                <code>git status -s</code>
-                <code>git add archivo.txt</code>
-                <code>git add .</code>
-                <code>git commit -m "mensaje"</code>
-                <code>git log</code>
-                <code>git log --oneline --graph --decorate --all</code>
-            </div>
-
-            <h3>Deshacer y comparar</h3>
-            <div class="command-card command-card--compact">
-                <code>git diff</code>
-                <code>git restore archivo.txt</code>
-                <code>git restore --staged archivo.txt</code>
-                <code>git reset --soft HEAD~1</code>
-                <code>git reset --hard &lt;commit&gt;</code>
-                <code>git revert &lt;commit&gt;</code>
-            </div>
-
-            <h3>Ramas</h3>
-            <div class="command-card command-card--compact">
-                <code>git branch</code>
-                <code>git branch nombre</code>
-                <code>git switch nombre</code>
-                <code>git switch -c nombre</code>
-                <code>git checkout nombre</code>
-                <code>git merge nombre</code>
-                <code>git branch -d nombre</code>
-                <code>git branch -D nombre</code>
-            </div>
-
-            <h3>Remoto (GitHub)</h3>
-            <div class="command-card command-card--compact">
-                <code>git clone https://github.com/usuario/repo.git</code>
-                <code>git remote -v</code>
-                <code>git remote add origin https://github.com/usuario/repo.git</code>
-                <code>git fetch origin</code>
-                <code>git pull origin main</code>
-                <code>git push -u origin main</code>
-                <code>git push origin --delete rama-remota</code>
-            </div>
+            <div id="git-ref-root"></div>
 
             <div id="git-interactive-zone" class="git-interactive-zone">
                 <h2 class="section-title-git">2. Guía interactiva (gráfico fijo al hacer scroll)</h2>
@@ -345,22 +294,70 @@
             </div>
         </section>
 
-        <section id="guia" class="content-section">
-            <h1>Guía rápida de clase</h1>
-            <p>Checklist para no perderte. La parte visual detallada está en la pestaña <strong>Git y GitHub</strong>, sección «Guía interactiva».</p>
+        <section id="simulador" class="content-section content-section--wide">
+            <h1>Simulador de terminal y Git</h1>
+            <p class="intro-callout intro-callout--sim">
+                Entorno <strong>100% simulado</strong>: crea carpetas, archivos y practica Git sin riesgo.
+                Si algo falla, usa <strong>¿Qué pasó?</strong> para ver la explicación o <strong>Reiniciar</strong> para empezar de cero.
+            </p>
 
-            <ol class="checklist">
-                <li>Instala Git y crea cuenta en GitHub.</li>
-                <li>Configura nombre y email: <code class="inline-code">git config --global user.name</code> y <code class="inline-code">user.email</code>.</li>
-                <li>En tu proyecto: <code class="inline-code">git init</code>, luego ciclo <code class="inline-code">add</code> / <code class="inline-code">commit</code>.</li>
-                <li>Crea repo vacío en GitHub, <code class="inline-code">git remote add origin ...</code>, <code class="inline-code">git push -u origin main</code>.</li>
-                <li>Para ramas: <code class="inline-code">git switch -c feature</code>, trabajar, <code class="inline-code">git switch main</code>, <code class="inline-code">git merge feature</code>, <code class="inline-code">git branch -d feature</code>.</li>
-            </ol>
+            <div class="sim-toolbar">
+                <button type="button" id="sim-btn-help" class="sim-btn sim-btn--help">¿Qué pasó?</button>
+                <button type="button" id="sim-btn-reset" class="sim-btn sim-btn--reset">Reiniciar simulador</button>
+            </div>
 
-            <p><button type="button" class="link-as-button" onclick="openSection('git', document.getElementById('tab-git')); requestAnimationFrame(function(){ var z=document.getElementById('git-interactive-zone'); if(z) z.scrollIntoView({behavior:'smooth',block:'start'}); });">Abrir guía interactiva con gráfico</button></p>
+            <div class="sim-layout">
+                <div class="sim-panel sim-panel--explorer">
+                    <h3 class="sim-panel-title">Explorador</h3>
+                    <p class="sim-panel-path">C:\Users\Estudiante</p>
+                    <div id="sim-explorer" class="sim-explorer"></div>
+                </div>
+
+                <div class="sim-panel sim-panel--terminal">
+                    <h3 class="sim-panel-title">Terminal</h3>
+                    <div id="sim-log" class="sim-log"></div>
+                    <form id="sim-form" class="sim-form" autocomplete="off">
+                        <label class="sim-input-row">
+                            <span id="sim-prompt" class="sim-prompt">C:\Users\Estudiante&gt;</span>
+                            <input id="sim-input" class="sim-input" type="text" spellcheck="false" placeholder="Escribe un comando..." />
+                        </label>
+                    </form>
+                </div>
+            </div>
+
+            <div id="sim-help-panel" class="sim-help-panel">
+                <h3>Ruta sugerida de práctica</h3>
+                <ol class="sim-practice-list">
+                    <li><button type="button" class="sim-chip" data-sim-run="mkdir proyecto-comando">mkdir proyecto-comando</button></li>
+                    <li><button type="button" class="sim-chip" data-sim-run="cd proyecto-comando">cd proyecto-comando</button></li>
+                    <li><button type="button" class="sim-chip" data-sim-run="git init">git init</button></li>
+                    <li><button type="button" class="sim-chip" data-sim-run="echo Hola mundo &gt; readme.txt">echo &gt; readme.txt</button></li>
+                    <li><button type="button" class="sim-chip" data-sim-run="git add .">git add .</button></li>
+                    <li><button type="button" class="sim-chip" data-sim-run="git commit -m &quot;Primer commit&quot;">git commit</button></li>
+                    <li><button type="button" class="sim-chip" data-sim-run="git switch -c feature">git switch -c feature</button></li>
+                    <li><button type="button" class="sim-chip" data-sim-run="git switch main">git switch main</button></li>
+                    <li><button type="button" class="sim-chip" data-sim-run="git merge feature">git merge feature</button></li>
+                </ol>
+
+                <div class="sim-reset-vs-revert">
+                    <h4>¿reset --hard o revert?</h4>
+                    <ul>
+                        <li><strong>reset --hard</strong>: reescribe tu rama local y descarta commits/cambios. Úsalo si <em>aún no compartiste</em> esos commits (sin push).</li>
+                        <li><strong>revert</strong>: añade un commit que deshace otro, manteniendo historial. Úsalo si ya subiste a GitHub o trabajas en equipo.</li>
+                    </ul>
+                </div>
+
+                <div id="sim-help-text" class="sim-help-text"></div>
+            </div>
+
+            <div class="sim-panel sim-panel--graph">
+                <h3 class="sim-panel-title">Historial Git (rama actual)</h3>
+                <div id="sim-git-graph"></div>
+            </div>
         </section>
     </main>
 
     <script src="./index.js"></script>
+    <script src="./simulator.js"></script>
 </body>
 </html>
