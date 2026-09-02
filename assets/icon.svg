@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Guía Comandos">
+  <rect width="512" height="512" rx="96" fill="#1a252f"/>
+  <rect x="64" y="96" width="384" height="320" rx="24" fill="#0d1117" stroke="#27ae60" stroke-width="8"/>
+  <text x="96" y="180" fill="#27ae60" font-family="Consolas,monospace" font-size="48" font-weight="700">&gt;_</text>
+  <text x="96" y="280" fill="#61afef" font-family="Consolas,monospace" font-size="36">git</text>
+  <text x="96" y="360" fill="#abb2bf" font-family="Consolas,monospace" font-size="28">cmd · ps</text>
+</svg>

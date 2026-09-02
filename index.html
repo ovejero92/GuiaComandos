@@ -3,361 +3,449 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cheat Sheet de Clase | CMD, PowerShell & Git</title>
+    <meta name="description" content="Guía interactiva de CMD, PowerShell, Bash y Git con simulador de terminal. Ideal para estudiantes.">
+    <meta name="theme-color" content="#27ae60">
+    <meta property="og:title" content="Guía de Comandos — CMD, PowerShell y Git">
+    <meta property="og:description" content="Cheat sheet con copiar al portapapeles y simulador Git sin riesgo.">
+    <meta property="og:url" content="https://ovejero92.github.io/GuiaComandos/">
+    <meta property="og:type" content="website">
+    <title>Guía de Comandos | CMD, PowerShell, Bash y Git</title>
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="./index.css">
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DLQR66229V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-DLQR66229V');
+</script>
 </head>
 <body>
 
-    <aside>
-        <h2>Atajo de comandos</h2>
-        <button type="button" id="tab-cmd" class="tab-btn active" onclick="openSection('cmd', this)">CMD</button>
-        <button type="button" id="tab-powershell" class="tab-btn" onclick="openSection('powershell', this)">PowerShell</button>
-        <button type="button" id="tab-git" class="tab-btn" onclick="openSection('git', this)">Git y GitHub</button>
-        <button type="button" id="tab-simulador" class="tab-btn" onclick="openSection('simulador', this)">Simulador</button>
+    <button type="button" id="sidebar-toggle" class="sidebar-toggle" aria-label="Abrir menú" aria-expanded="false"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
+
+    <aside class="sidebar" aria-label="Navegación principal">
+        <div class="sidebar-brand">
+            <h2>Guía Comandos</h2>
+            <p class="sidebar-tagline">CMD · PowerShell · Git</p>
+        </div>
+
+        <div class="sidebar-tools">
+            <label class="search-wrap">
+                <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+                <span class="visually-hidden">Buscar comandos</span>
+                <input type="search" id="global-search" class="search-input" placeholder="Buscar comando..." autocomplete="off" />
+                <button type="button" id="search-clear" class="search-clear" aria-label="Limpiar búsqueda"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+            </label>
+            <span id="search-count" class="search-count" hidden></span>
+            <div class="sidebar-actions">
+                <button type="button" id="btn-theme" class="sidebar-action-btn" aria-label="Cambiar tema"><i class="fa-solid fa-moon" aria-hidden="true"></i><span class="btn-label">Oscuro</span></button>
+                <button type="button" id="btn-print" class="sidebar-action-btn" title="Imprimir guía" aria-label="Imprimir guía"><i class="fa-solid fa-print" aria-hidden="true"></i></button>
+                <button type="button" id="btn-share" class="sidebar-action-btn" title="Compartir" aria-label="Compartir"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i></button>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-group" data-group="guias">
+                <button type="button" class="nav-group-toggle" aria-expanded="true">Guías de terminal</button>
+                <div class="nav-group-items">
+                    <button type="button" id="tab-cmd" class="tab-btn active" onclick="openSection('cmd', this)"><i class="fa-solid fa-terminal nav-icon" aria-hidden="true"></i>CMD</button>
+                    <button type="button" id="tab-powershell" class="tab-btn" onclick="openSection('powershell', this)"><i class="fa-solid fa-window-maximize nav-icon" aria-hidden="true"></i>PowerShell</button>
+                    <button type="button" id="tab-bash" class="tab-btn" onclick="openSection('bash', this)"><i class="fa-brands fa-linux nav-icon" aria-hidden="true"></i>Bash / Linux</button>
+                </div>
+            </div>
+            <div class="nav-group" data-group="git">
+                <button type="button" class="nav-group-toggle" aria-expanded="true">Git y flujos</button>
+                <div class="nav-group-items">
+                    <button type="button" id="tab-git" class="tab-btn" onclick="openSection('git', this)"><i class="fa-solid fa-code-branch nav-icon" aria-hidden="true"></i>Git y GitHub</button>
+                    <button type="button" id="tab-errores" class="tab-btn" onclick="openSection('errores', this)"><i class="fa-solid fa-triangle-exclamation nav-icon" aria-hidden="true"></i>Errores comunes</button>
+                    <button type="button" id="tab-flujos" class="tab-btn" onclick="openSection('flujos', this)"><i class="fa-solid fa-route nav-icon" aria-hidden="true"></i>Flujos de clase</button>
+                    <button type="button" id="tab-comparativa" class="tab-btn" onclick="openSection('comparativa', this)"><i class="fa-solid fa-table-columns nav-icon" aria-hidden="true"></i>CMD vs PS vs Bash</button>
+                </div>
+            </div>
+            <div class="nav-group" data-group="practica">
+                <button type="button" class="nav-group-toggle" aria-expanded="true">Práctica</button>
+                <div class="nav-group-items">
+                    <button type="button" id="tab-simulador" class="tab-btn" onclick="openSection('simulador', this)"><i class="fa-solid fa-laptop-code nav-icon" aria-hidden="true"></i>Simulador</button>
+                </div>
+            </div>
+            <div class="nav-group" data-group="mas">
+                <button type="button" class="nav-group-toggle" aria-expanded="true">Más</button>
+                <div class="nav-group-items">
+                    <button type="button" id="tab-recursos" class="tab-btn" onclick="openSection('recursos', this)"><i class="fa-solid fa-book nav-icon" aria-hidden="true"></i>Recursos</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a class="donate-link" href="https://ko-fi.com/coffeedeev" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-mug-hot" aria-hidden="true"></i><span>Invitame un café</span></a>
+            <p class="sidebar-note">Cambia el enlace Ko-fi por el tuyo en index.html</p>
+        </div>
     </aside>
 
-    <main>
-        <section id="cmd" class="content-section active">
-            <h1>Comandos útiles de CMD</h1>
-
+    <main id="main-content">
+        <!-- CMD, PowerShell, Git sections: contenido existente -->
+        <section id="cmd" class="content-section active" data-section="cmd">
+            <header class="section-header">
+                <h1>Comandos útiles de CMD</h1>
+                <p class="muted">Consola clásica de Windows. Usa el buscador del menú para filtrar.</p>
+            </header>
             <h3>Información y ayuda</h3>
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># HELP</h2>
                 <p>Muestra una lista de todos los comandos disponibles o ayuda específica para uno.</p>
                 <code>help</code>
-                <code style="margin: 5px 0;">help cd</code>
+                <code>help cd</code>
             </div>
-
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># CLS (Clear Screen)</h2>
                 <p>Limpia todo el texto de la terminal para empezar de cero visualmente.</p>
                 <code>cls</code>
             </div>
-
             <h3>Navegación de directorios</h3>
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># CD (Change Directory)</h2>
-                <p>Cambia a la carpeta especificada. Usa <code>..</code> para subir un nivel.</p>
+                <p>Cambia a la carpeta especificada. Usa <code class="inline-code">..</code> para subir un nivel.</p>
                 <code>cd Documentos/Proyectos</code>
-                <code style="margin: 5px 0;">cd ..</code>
-                <code style="margin: 5px 0;">cd C:\Users\Desktop</code>
+                <code>cd ..</code>
+                <code>cd C:\Users\Desktop</code>
             </div>
-
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># DIR</h2>
                 <p>Lista todos los archivos y carpetas dentro del directorio actual.</p>
                 <code>dir</code>
             </div>
-
             <h3>Gestión de archivos y carpetas</h3>
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># MKDIR / MD</h2>
                 <p>Crea una nueva carpeta o directorio.</p>
                 <code>mkdir nueva_carpeta</code>
-                <code style="margin: 5px 0;">md nueva_carpeta</code>
+                <code>md nueva_carpeta</code>
             </div>
-
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># TYPE / ECHO</h2>
-                <p><code>echo</code> escribe texto o crea archivos. <code>type</code> lee el contenido de un archivo.</p>
+                <p><code class="inline-code">echo</code> escribe texto o crea archivos. <code class="inline-code">type</code> lee el contenido.</p>
                 <code>echo contenido &gt; hola.txt</code>
-                <code style="margin: 5px 0;">type hola.txt</code>
+                <code>type hola.txt</code>
             </div>
-
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># DEL / RMDIR</h2>
-                <p><code>del</code> borra archivos. <code>rmdir /s</code> borra una carpeta y todo su contenido.</p>
+                <p><code class="inline-code">del</code> borra archivos. <code class="inline-code">rmdir /s</code> borra carpeta y contenido.</p>
                 <code>del archivo.txt</code>
-                <code style="margin: 5px 0;">rmdir /s nombre_carpeta</code>
+                <code>rmdir /s nombre_carpeta</code>
             </div>
-
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># MOVE / REN</h2>
-                <p>Mueve archivos a otra ruta o cambia el nombre de un archivo o carpeta.</p>
+                <p>Mueve archivos o cambia el nombre de un archivo o carpeta.</p>
                 <code>ren nombre_viejo.txt nombre_nuevo.txt</code>
-                <code style="margin: 5px 0;">move archivo.txt ./nueva_ubicacion/</code>
+                <code>move archivo.txt ./nueva_ubicacion/</code>
             </div>
-
             <h3>Extras de desarrollador</h3>
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># CODE .</h2>
-                <p>Abre la carpeta actual directamente en Visual Studio Code.</p>
+                <p>Abre la carpeta actual en Visual Studio Code.</p>
                 <code>code .</code>
             </div>
-
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># EXPLORER .</h2>
-                <p>Abre el Explorador de archivos de Windows en la carpeta actual.</p>
+                <p>Abre el Explorador de archivos en la carpeta actual.</p>
                 <code>explorer .</code>
             </div>
         </section>
 
-        <section id="powershell" class="content-section">
-            <h1>PowerShell (consola avanzada)</h1>
-            <p style="background: #e8f4fd; padding: 15px; border-radius: 8px; border-left: 5px solid #3498db;">
-                <strong>Diferencia clave:</strong> PowerShell trabaja con <strong>objetos</strong>, no solo texto.
-                Estructura <code>Verbo-Sustantivo</code> y aliases tipo Linux.
-            </p>
-
+        <section id="powershell" class="content-section" data-section="powershell">
+            <header class="section-header">
+                <h1>PowerShell</h1>
+                <p class="intro-callout intro-callout--ps">PowerShell trabaja con <strong>objetos</strong>, no solo texto. Estructura <code class="inline-code">Verbo-Sustantivo</code>.</p>
+            </header>
             <h3>Ayuda e información</h3>
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># GET-HELP</h2>
-                <p>Documentación detallada. <code>-Online</code> abre el navegador.</p>
+                <p>Documentación detallada. <code class="inline-code">-Online</code> abre el navegador.</p>
                 <code>Get-Help Get-Service</code>
-                <code style="margin: 5px 0;">Get-Help Set-ExecutionPolicy -Online</code>
+                <code>Get-Help Set-ExecutionPolicy -Online</code>
             </div>
-
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># GET-COMMAND</h2>
                 <p>Busca comandos, funciones o alias instalados.</p>
                 <code>Get-Command *network*</code>
             </div>
-
-            <h3>Navegación y archivos (aliases)</h3>
-            <div class="command-card">
+            <h3>Navegación y archivos</h3>
+            <div class="command-card" data-searchable>
                 <h2># LS / DIR / GCI</h2>
-                <p><code>ls</code> y <code>dir</code> son alias de <code>Get-ChildItem</code>.</p>
+                <p><code class="inline-code">ls</code> y <code class="inline-code">dir</code> son alias de <code class="inline-code">Get-ChildItem</code>.</p>
                 <code>ls</code>
-                <code style="margin: 5px 0;">Get-ChildItem -Hidden</code>
+                <code>Get-ChildItem -Hidden</code>
             </div>
-
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># NEW-ITEM</h2>
                 <p>Crea archivos o carpetas.</p>
                 <code>New-Item -Path "proyecto" -ItemType Directory</code>
-                <code style="margin: 5px 0;">New-Item -Path "log.txt" -ItemType File</code>
+                <code>New-Item -Path "log.txt" -ItemType File</code>
             </div>
-
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># CAT / GET-CONTENT</h2>
                 <p>Muestra el contenido de un archivo.</p>
                 <code>cat config.json</code>
-                <code style="margin: 5px 0;">Get-Content indices.txt -TotalCount 10</code>
+                <code>Get-Content indices.txt -TotalCount 10</code>
             </div>
-
             <h3>Seguridad y scripts</h3>
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># SET-EXECUTIONPOLICY</h2>
                 <p>Permite ejecutar scripts locales (suele requerir administrador).</p>
                 <code>Set-ExecutionPolicy RemoteSigned</code>
             </div>
-
             <h3>Red y procesos</h3>
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># TEST-CONNECTION</h2>
                 <p>Similar a ping, con más detalle.</p>
                 <code>Test-Connection google.com</code>
             </div>
-
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># GET-PROCESS</h2>
-                <p>Procesos activos; combinable con <code>Stop-Process</code>.</p>
+                <p>Procesos activos; combinable con <code class="inline-code">Stop-Process</code>.</p>
                 <code>Get-Process | Where-Object {$_.CPU -gt 10}</code>
-                <code style="margin: 5px 0;">Stop-Process -Name "node"</code>
+                <code>Stop-Process -Name "node"</code>
             </div>
-
-            <div class="command-card">
+            <div class="command-card" data-searchable>
                 <h2># SELECT-STRING</h2>
                 <p>Busca texto dentro de archivos (estilo grep).</p>
                 <code>Select-String -Path "*.log" -Pattern "Error"</code>
             </div>
         </section>
 
-        <section id="git" class="content-section">
-            <h1>Git y GitHub</h1>
+        <section id="bash" class="content-section" data-section="bash">
+            <header class="section-header">
+                <h1>Bash / Linux / WSL</h1>
+                <p class="muted">Comandos útiles en servidores, macOS o Windows Subsystem for Linux (WSL).</p>
+            </header>
+            <div id="bash-root"></div>
+        </section>
 
-            <p class="intro-callout intro-callout--git">
-                <strong>Ideas clave:</strong> Git guarda <strong>cambios</strong> en una línea de tiempo de commits.
-                Flujo habitual: carpeta de trabajo → <em>staging</em> (<code>git add</code>) → historial local (<code>git commit</code>) → remoto (<code>git push</code>).
-            </p>
-
+        <section id="git" class="content-section content-section--wide" data-section="git">
+            <header class="section-header">
+                <h1>Git y GitHub</h1>
+                <p class="intro-callout intro-callout--git">
+                    Git guarda <strong>cambios</strong> en una línea de tiempo: carpeta → <em>staging</em> → <em>commit</em> → <em>push</em>.
+                </p>
+            </header>
             <h3>Enlaces</h3>
             <ul>
-                <li><a href="https://git-scm.com/">Instalar Git</a></li>
-                <li><a href="https://github.com/">GitHub</a></li>
+                <li><a href="https://git-scm.com/" target="_blank" rel="noopener">Instalar Git</a></li>
+                <li><a href="https://github.com/" target="_blank" rel="noopener">GitHub</a></li>
+                <li><a href="https://learngitbranching.js.org/" target="_blank" rel="noopener">Learn Git Branching (extra visual)</a></li>
             </ul>
-
-            <h2 class="section-title-git">1. Referencia: comandos (orden sugerido para estudiar)</h2>
-            <p class="muted">Primero una lista clara; más abajo, la guía interactiva con el mismo panel gráfico para commits y ramas.</p>
-
+            <h2 class="section-title-git">1. Referencia de comandos</h2>
+            <p class="muted">Usa el botón <i class="fa-solid fa-copy icon-inline" aria-hidden="true"></i> para copiar y <i class="fa-solid fa-chevron-down icon-inline" aria-hidden="true"></i> para ver la descripción de cada comando.</p>
             <div id="git-ref-root"></div>
-
             <div id="git-interactive-zone" class="git-interactive-zone">
-                <h2 class="section-title-git">2. Guía interactiva (gráfico fijo al hacer scroll)</h2>
-                <p class="muted">El panel de la derecha (o arriba en el móvil) muestra el historial Git según el paso que tengas más visible en pantalla.</p>
-
+                <h2 class="section-title-git">2. Guía visual (scroll + gráfico)</h2>
+                <p class="muted">El panel derecho muestra commits y ramas según el paso visible.</p>
                 <div class="git-interactive-layout">
                     <div class="git-interactive-scroll">
-
-                        <h3 class="git-track-title">A. Subir un proyecto a GitHub (resumen)</h3>
-                        <article class="git-viz-step" data-viz="linear-0">
-                            <span class="git-step-badge">Paso A.1</span>
+                        <h3 class="git-track-title">A. Subir proyecto a GitHub</h3>
+                        <article class="git-viz-step" data-viz="linear-0" data-searchable>
+                            <span class="git-step-badge">A.1</span>
                             <h4>Carpeta y Git</h4>
-                            <p>Crea la carpeta del proyecto, ábrela en la terminal y ejecuta:</p>
                             <code>git init</code>
-                            <p class="step-note">El gráfico aún no tiene commits; solo preparas el repositorio.</p>
                         </article>
-                        <article class="git-viz-step" data-viz="linear-1">
-                            <span class="git-step-badge">Paso A.2</span>
-                            <h4>Primer commit local</h4>
+                        <article class="git-viz-step" data-viz="linear-1" data-searchable>
+                            <span class="git-step-badge">A.2</span>
+                            <h4>Primer commit</h4>
                             <code>git add .</code>
                             <code>git commit -m "Primer commit"</code>
-                            <p class="step-note">Aparece el primer nodo en la línea de tiempo.</p>
                         </article>
-                        <article class="git-viz-step" data-viz="linear-2">
-                            <span class="git-step-badge">Paso A.3</span>
-                            <h4>Más trabajo local</h4>
-                            <p>Sigue el ciclo <code>status</code> → <code>add</code> → <code>commit</code> cuantas veces necesites.</p>
+                        <article class="git-viz-step" data-viz="linear-2" data-searchable>
+                            <span class="git-step-badge">A.3</span>
+                            <h4>Más commits</h4>
                             <code>git status</code>
                             <code>git add .</code>
                             <code>git commit -m "Describe el cambio"</code>
                         </article>
-                        <article class="git-viz-step" data-viz="linear-3-remote">
-                            <span class="git-step-badge">Paso A.4</span>
-                            <h4>Repositorio vacío en GitHub</h4>
-                            <p>Crea el repo en la web (sin README si quieres evitar mezclar historiales). Copia la URL HTTPS.</p>
+                        <article class="git-viz-step" data-viz="linear-3-remote" data-searchable>
+                            <span class="git-step-badge">A.4</span>
+                            <h4>Subir a GitHub</h4>
                             <code>git remote add origin https://github.com/USUARIO/REPO.git</code>
-                            <code>git branch -M main</code>
                             <code>git push -u origin main</code>
-                            <p class="step-note">El push no dibuja otra línea aquí: solo copia tus commits al servidor. El grafo local sigue siendo el mismo.</p>
                         </article>
-
-                        <h3 class="git-track-title">B. Commits en el tiempo</h3>
-                        <article class="git-viz-step" data-viz="linear-3-log">
-                            <span class="git-step-badge">Historial</span>
-                            <h4>Ver el tiempo entre commits</h4>
-                            <p>Cada círculo es un commit; la rama avanza hacia el más reciente.</p>
+                        <h3 class="git-track-title">B. Tiempo y reset</h3>
+                        <article class="git-viz-step" data-viz="linear-3-log" data-searchable>
+                            <span class="git-step-badge">B.1</span>
+                            <h4>Ver historial</h4>
                             <code>git log --oneline</code>
                         </article>
-                        <article class="git-viz-step" data-viz="linear-reset">
-                            <span class="git-step-badge">Peligro</span>
-                            <h4>Volver atrás y “perder” un commit en la rama</h4>
-                            <p><code>git reset --hard b</code> mueve <code>main</code> al commit <code>b</code>. El commit <code>c</code> queda fuera de la rama (ghost en el dibujo).</p>
+                        <article class="git-viz-step" data-viz="linear-reset" data-searchable>
+                            <span class="git-step-badge">B.2</span>
+                            <h4>Reset duro</h4>
                             <code>git reset --hard b</code>
-                            <p class="step-note">Para historial público compartido suele preferirse <code>git revert</code>, que crea un commit nuevo que deshace otro sin reescribir la historia.</p>
+                            <p class="step-note">En historial compartido, preferí <code class="inline-code">git revert</code>.</p>
                         </article>
-
-                        <h3 class="git-track-title">C. Ramas: crear, fusionar y borrar</h3>
-                        <article class="git-viz-step" data-viz="branch-0">
-                            <span class="git-step-badge">C.1</span>
-                            <h4>Partimos de main estable</h4>
-                            <code>git switch main</code>
-                        </article>
-                        <article class="git-viz-step" data-viz="branch-1">
-                            <span class="git-step-badge">C.2</span>
-                            <h4>Crear rama sin cambiar HEAD</h4>
-                            <code>git branch feature</code>
-                            <p class="step-note"><code>git switch -c feature</code> hace lo mismo y además te deja en la rama nueva.</p>
-                        </article>
-                        <article class="git-viz-step" data-viz="branch-2">
-                            <span class="git-step-badge">C.3</span>
-                            <h4>Commits solo en feature</h4>
-                            <code>git switch feature</code>
-                            <code>git add .</code>
-                            <code>git commit -m "Trabajo aislado"</code>
-                            <p class="step-note">Observa cómo <code>main</code> se queda atrás y <code>feature</code> avanza en paralelo.</p>
-                        </article>
-                        <article class="git-viz-step" data-viz="branch-3">
-                            <span class="git-step-badge">C.4</span>
-                            <h4>Más commits en la rama</h4>
-                            <p>Misma idea: la punta de <code>feature</code> sube; <code>main</code> no se mueve.</p>
-                        </article>
-                        <article class="git-viz-step" data-viz="branch-4">
-                            <span class="git-step-badge">C.5</span>
-                            <h4>Volver a main</h4>
-                            <code>git switch main</code>
-                        </article>
-                        <article class="git-viz-step" data-viz="branch-5">
-                            <span class="git-step-badge">C.6</span>
-                            <h4>Fusionar feature en main</h4>
-                            <code>git merge feature</code>
-                            <p class="step-note">Aparece el commit de fusión <code>M</code> con dos padres. La rama <code>feature</code> sigue existiendo.</p>
-                        </article>
-                        <article class="git-viz-step" data-viz="branch-6">
-                            <span class="git-step-badge">C.7</span>
-                            <h4>Borrar la rama (solo el puntero)</h4>
-                            <code>git branch -d feature</code>
-                            <p class="step-note">No borra los commits que ya están alcanzables desde <code>main</code> (por ejemplo tras el merge). <code>-D</code> fuerza el borrado si no está fusionada.</p>
-                            <p class="step-note">En GitHub, tras un Pull Request mergeado sueles pulsar “Delete branch” para borrar la rama remota; localmente usa <code>git fetch --prune</code> para limpiar referencias.</p>
-                        </article>
+                        <h3 class="git-track-title">C. Ramas</h3>
+                        <article class="git-viz-step" data-viz="branch-0" data-searchable><span class="git-step-badge">C.1</span><h4>main estable</h4><code>git switch main</code></article>
+                        <article class="git-viz-step" data-viz="branch-1" data-searchable><span class="git-step-badge">C.2</span><h4>Crear rama</h4><code>git branch feature</code></article>
+                        <article class="git-viz-step" data-viz="branch-2" data-searchable><span class="git-step-badge">C.3</span><h4>Commits en feature</h4><code>git switch feature</code><code>git commit -m "Trabajo"</code></article>
+                        <article class="git-viz-step" data-viz="branch-5" data-searchable><span class="git-step-badge">C.4</span><h4>Merge</h4><code>git merge feature</code></article>
+                        <article class="git-viz-step" data-viz="branch-6" data-searchable><span class="git-step-badge">C.5</span><h4>Borrar rama</h4><code>git branch -d feature</code></article>
                     </div>
-
                     <aside id="git-graph-panel" class="git-graph-panel" aria-live="polite">
                         <div class="git-graph-panel-inner">
                             <p class="git-graph-label">Vista del historial</p>
                             <h3 id="git-graph-title" class="git-graph-heading">Repositorio nuevo</h3>
                             <div id="git-graph-svg" class="git-graph-mount"></div>
-                            <p id="git-graph-caption" class="git-graph-caption">Desplázate por los pasos de la izquierda para actualizar este dibujo.</p>
+                            <p id="git-graph-caption" class="git-graph-caption">Desplázate por los pasos.</p>
                         </div>
                     </aside>
                 </div>
             </div>
         </section>
 
-        <section id="simulador" class="content-section content-section--wide">
-            <h1>Simulador de terminal y Git</h1>
-            <p class="intro-callout intro-callout--sim">
-                Entorno <strong>100% simulado</strong>: crea carpetas, archivos y practica Git sin riesgo.
-                Si algo falla, usa <strong>¿Qué pasó?</strong> para ver la explicación o <strong>Reiniciar</strong> para empezar de cero.
-            </p>
+        <section id="errores" class="content-section" data-section="errores">
+            <header class="section-header">
+                <h1>Errores comunes y soluciones</h1>
+                <p class="muted">Lo que más aparece en clase y cómo salir del paso.</p>
+            </header>
+            <div id="errores-root"></div>
+        </section>
 
+        <section id="flujos" class="content-section" data-section="flujos">
+            <header class="section-header">
+                <h1>Flujos reales de clase</h1>
+                <p class="muted">Pasos completos para TPs, clonar repos y conflictos.</p>
+            </header>
+            <div id="flujos-root"></div>
+        </section>
+
+        <section id="comparativa" class="content-section" data-section="comparativa">
+            <header class="section-header">
+                <h1>CMD vs PowerShell vs Bash</h1>
+                <p class="muted">La misma tarea en tres entornos.</p>
+            </header>
+            <div id="comparativa-root"></div>
+        </section>
+
+        <section id="simulador" class="content-section content-section--wide" data-section="simulador">
+            <header class="section-header">
+                <h1>Simulador de terminal y Git</h1>
+                <p class="intro-callout intro-callout--sim">Entorno <strong>simulado</strong>: practicá sin riesgo. Flechas ↑↓ para historial. Exportá la sesión al terminar.</p>
+            </header>
             <div class="sim-toolbar">
-                <button type="button" id="sim-btn-help" class="sim-btn sim-btn--help">¿Qué pasó?</button>
-                <button type="button" id="sim-btn-reset" class="sim-btn sim-btn--reset">Reiniciar simulador</button>
+                <label class="sim-mission-select">
+                    <span>Misión:</span>
+                    <select id="sim-mission-select" aria-label="Seleccionar misión guiada">
+                        <option value="">Libre (sin misión)</option>
+                    </select>
+                </label>
+                <button type="button" id="sim-btn-help" class="sim-btn sim-btn--help"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span>¿Qué pasó?</span></button>
+                <button type="button" id="sim-btn-export" class="sim-btn sim-btn--export"><i class="fa-solid fa-download" aria-hidden="true"></i><span>Exportar sesión</span></button>
+                <button type="button" id="sim-btn-reset" class="sim-btn sim-btn--reset"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i><span>Reiniciar</span></button>
             </div>
-
+            <div id="sim-mission-panel" class="sim-mission-panel" hidden>
+                <p id="sim-mission-text" class="sim-mission-text"></p>
+                <div class="sim-mission-progress"><div id="sim-mission-bar" class="sim-mission-bar"></div></div>
+            </div>
             <div class="sim-layout">
                 <div class="sim-panel sim-panel--explorer">
                     <h3 class="sim-panel-title">Explorador</h3>
                     <p class="sim-panel-path">C:\Users\Estudiante</p>
                     <div id="sim-explorer" class="sim-explorer"></div>
                 </div>
-
                 <div class="sim-panel sim-panel--terminal">
                     <h3 class="sim-panel-title">Terminal</h3>
-                    <div id="sim-log" class="sim-log"></div>
+                    <div id="sim-log" class="sim-log" role="log" aria-live="polite"></div>
                     <form id="sim-form" class="sim-form" autocomplete="off">
                         <label class="sim-input-row">
                             <span id="sim-prompt" class="sim-prompt">C:\Users\Estudiante&gt;</span>
-                            <input id="sim-input" class="sim-input" type="text" spellcheck="false" placeholder="Escribe un comando..." />
+                            <input id="sim-input" class="sim-input" type="text" spellcheck="false" placeholder="Comando... (↑↓ historial)" aria-label="Comando de terminal" />
                         </label>
                     </form>
                 </div>
             </div>
-
             <div id="sim-help-panel" class="sim-help-panel">
-                <h3>Ruta sugerida de práctica</h3>
+                <h3>Atajos rápidos</h3>
                 <ol class="sim-practice-list">
                     <li><button type="button" class="sim-chip" data-sim-run="mkdir proyecto-comando">mkdir proyecto-comando</button></li>
                     <li><button type="button" class="sim-chip" data-sim-run="cd proyecto-comando">cd proyecto-comando</button></li>
                     <li><button type="button" class="sim-chip" data-sim-run="git init">git init</button></li>
-                    <li><button type="button" class="sim-chip" data-sim-run="echo Hola mundo &gt; readme.txt">echo &gt; readme.txt</button></li>
+                    <li><button type="button" class="sim-chip" data-sim-run="echo Hola &gt; readme.txt">echo &gt; readme.txt</button></li>
                     <li><button type="button" class="sim-chip" data-sim-run="git add .">git add .</button></li>
                     <li><button type="button" class="sim-chip" data-sim-run="git commit -m &quot;Primer commit&quot;">git commit</button></li>
                     <li><button type="button" class="sim-chip" data-sim-run="git switch -c feature">git switch -c feature</button></li>
-                    <li><button type="button" class="sim-chip" data-sim-run="git switch main">git switch main</button></li>
                     <li><button type="button" class="sim-chip" data-sim-run="git merge feature">git merge feature</button></li>
                 </ol>
-
                 <div class="sim-reset-vs-revert">
-                    <h4>¿reset --hard o revert?</h4>
+                    <h4>reset --hard vs revert</h4>
                     <ul>
-                        <li><strong>reset --hard</strong>: reescribe tu rama local y descarta commits/cambios. Úsalo si <em>aún no compartiste</em> esos commits (sin push).</li>
-                        <li><strong>revert</strong>: añade un commit que deshace otro, manteniendo historial. Úsalo si ya subiste a GitHub o trabajas en equipo.</li>
+                        <li><strong>reset --hard</strong>: solo si no compartiste commits (sin push).</li>
+                        <li><strong>revert</strong>: si ya subiste a GitHub o trabajás en equipo.</li>
                     </ul>
                 </div>
-
                 <div id="sim-help-text" class="sim-help-text"></div>
             </div>
-
             <div class="sim-panel sim-panel--graph">
-                <h3 class="sim-panel-title">Historial Git (rama actual)</h3>
+                <h3 class="sim-panel-title">Historial Git</h3>
                 <div id="sim-git-graph"></div>
             </div>
         </section>
+
+        <section id="recursos" class="content-section" data-section="recursos">
+            <header class="section-header">
+                <h1>Recursos y comunidad</h1>
+            </header>
+            <div class="info-card" data-searchable>
+                <h3 class="info-card__title">Compartir con compañeros</h3>
+                <div class="share-buttons">
+                    <button type="button" class="share-btn" data-share="whatsapp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp</button>
+                    <button type="button" class="share-btn" data-share="twitter"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i> X / Twitter</button>
+                    <button type="button" class="share-btn" data-share="copy"><i class="fa-solid fa-link" aria-hidden="true"></i> Copiar enlace</button>
+                </div>
+            </div>
+            <div class="info-card" data-searchable>
+                <h3 class="info-card__title">Enlaces recomendados</h3>
+                <ul class="resource-list">
+                    <li><a href="https://git-scm.com/doc" target="_blank" rel="noopener">Documentación oficial de Git</a></li>
+                    <li><a href="https://docs.github.com/es" target="_blank" rel="noopener">Docs de GitHub en español</a></li>
+                    <li><a href="https://learn.microsoft.com/es-es/powershell/" target="_blank" rel="noopener">PowerShell — Microsoft Learn</a></li>
+                    <li><a href="https://www.freecodecamp.org/espanol/" target="_blank" rel="noopener">freeCodeCamp en español</a></li>
+                    <li><a href="https://ohmygit.org/" target="_blank" rel="noopener">Oh My Git! (juego para aprender Git)</a></li>
+                </ul>
+            </div>
+            <div class="info-card" data-searchable>
+                <h3 class="info-card__title">¿Qué te falta en la guía?</h3>
+                <form id="feedback-form" class="feedback-form">
+                    <label>Nombre (opcional)<input type="text" name="name" placeholder="Tu nombre" /></label>
+                    <label>Mensaje<textarea name="message" rows="4" required placeholder="Comandos, errores o temas que quieras ver..."></textarea></label>
+                    <button type="submit" class="link-as-button">Enviar sugerencia por email</button>
+                    <p class="muted small">Configura tu email en <code class="inline-code">features.js</code> (initFeedback).</p>
+                </form>
+            </div>
+            <div class="info-card ad-slot" data-searchable>
+                <h3 class="info-card__title">Apoyo al proyecto</h3>
+                <p class="muted">Podés agregar un banner discreto de AdSense o Ko-fi. GitHub Pages permite donaciones y links de afiliados si el foco sigue siendo educativo.</p>
+                <!--
+                ═══ GOOGLE ADSENSE (opcional — anuncios; difícil de aprobar en *.github.io) ═══
+                1) Pedí cuenta en https://www.google.com/adsense/ (puede tardar días o semanas).
+                2) Cuando te aprueben, AdSense te da un código HTML (script + a veces un bloque de anuncio).
+                3) Pegá ESE código acá abajo, reemplazando el div de ejemplo.
+                4) Borrá estas líneas <!-- y --> para que el navegador lo lea.
+
+                <div class="ad-placeholder">Espacio publicitario</div>
+                -->
+            </div>
+        </section>
+
+        <footer class="site-footer">
+            <p>Guía de Comandos — Material educativo · <a href="https://github.com/ovejero92/GuiaComandos" target="_blank" rel="noopener">GitHub</a></p>
+            <p class="muted small">Tip: en el celular, «Agregar a pantalla de inicio» para usarla como app (PWA).</p>
+        </footer>
     </main>
 
+    <script src="./icons.js"></script>
     <script src="./index.js"></script>
+    <script src="./features.js"></script>
     <script src="./simulator.js"></script>
 </body>
 </html>

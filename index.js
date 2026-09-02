@@ -400,6 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initGitScrollViz();
   renderGitReference();
   enhanceAllCommandBlocks();
+  if (window.__reindexSearch) window.__reindexSearch();
 });
 
 /* ─── Copiar comandos (texto limpio, sin el prefijo >) ─── */
@@ -407,11 +408,12 @@ document.addEventListener("DOMContentLoaded", () => {
 function copyText(text, btn) {
   const clean = text.trim();
   navigator.clipboard.writeText(clean).then(() => {
-    const prev = btn.textContent;
-    btn.textContent = "✓";
+    const icon = btn.querySelector("i");
+    const prevClass = icon ? icon.className : "fa-solid fa-copy";
+    if (icon) icon.className = "fa-solid fa-check";
     btn.classList.add("btn-copy--ok");
     setTimeout(() => {
-      btn.textContent = prev;
+      if (icon) icon.className = prevClass;
       btn.classList.remove("btn-copy--ok");
     }, 1400);
   });
@@ -437,7 +439,8 @@ function buildCmdLine(text, opts) {
   copyBtn.type = "button";
   copyBtn.className = "btn-copy";
   copyBtn.title = "Copiar comando";
-  copyBtn.textContent = "📋";
+  copyBtn.setAttribute("aria-label", "Copiar comando");
+  copyBtn.innerHTML = iconHtml(Icon.copy);
   copyBtn.addEventListener("click", () => copyText(text, copyBtn));
   actions.appendChild(copyBtn);
 
@@ -446,7 +449,8 @@ function buildCmdLine(text, opts) {
     descBtn.type = "button";
     descBtn.className = "btn-desc";
     descBtn.title = "Qué hace este comando";
-    descBtn.textContent = "▽";
+    descBtn.setAttribute("aria-label", "Mostrar descripción del comando");
+    descBtn.innerHTML = iconHtml(Icon.chevronDown);
     descBtn.setAttribute("aria-expanded", "false");
 
     const descPanel = document.createElement("p");
@@ -458,7 +462,8 @@ function buildCmdLine(text, opts) {
       const open = descPanel.hidden;
       descPanel.hidden = !open;
       descBtn.setAttribute("aria-expanded", open ? "true" : "false");
-      descBtn.textContent = open ? "△" : "▽";
+      const ic = descBtn.querySelector("i");
+      if (ic) ic.className = open ? `fa-solid ${Icon.chevronUp}` : `fa-solid ${Icon.chevronDown}`;
     });
     actions.appendChild(descBtn);
     wrap.appendChild(prompt);
@@ -549,8 +554,20 @@ const GIT_REF_SECTIONS = [
       { cmd: "git remote add origin https://github.com/usuario/repo.git", desc: "Vincula tu repo local con uno vacío en GitHub." },
       { cmd: "git fetch origin", desc: "Trae commits y ramas del remoto sin fusionarlos aún." },
       { cmd: "git pull origin main", desc: "Descarga y fusiona cambios de main en tu rama actual." },
+      { cmd: "git pull --rebase origin main", desc: "Aplica tus commits encima de los del remoto (historial más lineal)." },
       { cmd: "git push -u origin main", desc: "Sube commits y deja main local enlazada con origin/main." },
       { cmd: "git push origin --delete rama-remota", desc: "Elimina una rama en GitHub (tras mergear un PR, por ejemplo)." },
+    ],
+  },
+  {
+    title: "Avanzado (muy útil)",
+    commands: [
+      { cmd: "git stash", desc: "Guarda cambios locales temporalmente para cambiar de rama limpio." },
+      { cmd: "git stash pop", desc: "Recupera el último stash y lo elimina de la pila." },
+      { cmd: "git stash list", desc: "Muestra stashes guardados." },
+      { cmd: "git cherry-pick <commit>", desc: "Copia un commit concreto a la rama actual." },
+      { cmd: "git tag v1.0.0", desc: "Marca un punto importante del historial (release)." },
+      { cmd: "git show <commit>", desc: "Detalle de un commit: autor, fecha y diff." },
     ],
   },
 ];

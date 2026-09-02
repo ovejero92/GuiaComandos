@@ -5,6 +5,117 @@
   const HOME = "C:\\Users\\Estudiante";
   const MAX_LOG = 200;
 
+  const ERROR_HINTS = {
+    "not a git repository": "Entrá a la carpeta del proyecto y ejecutá git init, o cloná con git clone.",
+    "no hay nada preparado": "Primero editá/creá archivos, luego git add . y después git commit.",
+    "no se proporcionó un mensaje": "Usá git commit -m \"descripción del cambio\".",
+    "fully merged": "Hacé git merge nombre-rama antes de borrar, o git branch -D para forzar.",
+    "rama.*no encontrada": "Listá ramas con git branch. Creá una con git switch -c nombre.",
+    "no es un directorio": "Verificá la ruta con dir antes de cd.",
+    "Comando no reconocido": "Probá dir, cd, mkdir, echo, type, del, cls o comandos git.",
+  };
+
+  const MISSIONS = [
+    {
+      id: "primer-repo",
+      title: "Misión 1: Tu primer repositorio",
+      steps: [
+        { label: "Crear carpeta proyecto-comando", test: (s) => !!getNode(s.fs, HOME + "\\proyecto-comando") },
+        { label: "Entrar con cd proyecto-comando", test: (s) => pathKey(s.cwd).endsWith("proyecto-comando") },
+        { label: "Inicializar Git (git init)", test: (s) => !!s.repos[pathKey(s.cwd)] },
+        { label: "Crear readme.txt", test: (s) => hasFileInCwd(s, "readme.txt") },
+        { label: "Hacer git add .", test: (s) => hasStaging(s) },
+        { label: "Primer commit", test: (s) => commitCount(s) >= 1 },
+      ],
+    },
+    {
+      id: "tres-commits",
+      title: "Misión 2: Tres commits en main",
+      steps: [
+        { label: "Repo con al menos 1 commit", test: (s) => commitCount(s) >= 1 },
+        { label: "Segundo commit", test: (s) => commitCount(s) >= 2 },
+        { label: "Tercer commit", test: (s) => commitCount(s) >= 3 },
+      ],
+    },
+    {
+      id: "ramas-merge",
+      title: "Misión 3: Ramas y merge",
+      steps: [
+        { label: "Crear rama feature", test: (s) => hasBranch(s, "feature") },
+        { label: "Commit en feature", test: (s) => {
+          const f = findRepo(s, s.cwd);
+          if (!f || !f.repo.branches.feature) return false;
+          return f.repo.branches.feature !== f.repo.branches.main;
+        }},
+        { label: "Volver a main", test: (s) => currentBranch(s) === "main" },
+        { label: "Merge feature en main", test: (s) => hasMergeCommit(s) },
+      ],
+    },
+    {
+      id: "reset-revert",
+      title: "Misión 4: Probar reset o revert",
+      steps: [
+        { label: "Al menos 2 commits", test: (s) => commitCount(s) >= 2 },
+        { label: "Ejecutar reset --hard o revert", test: (s) => s.didResetOrRevert },
+      ],
+    },
+  ];
+
+  function hasFileInCwd(sim, name) {
+    const p = sim.cwd + "\\" + name;
+    const n = getNode(sim.fs, p);
+    return n && n.type === "file";
+  }
+
+  function hasStaging(sim) {
+    const f = findRepo(sim, sim.cwd);
+    return f && Object.keys(f.repo.staging || {}).length > 0;
+  }
+
+  function commitCount(sim) {
+    const f = findRepo(sim, sim.cwd);
+    return f ? Object.keys(f.repo.commits).length : 0;
+  }
+
+  function hasBranch(sim, name) {
+    const f = findRepo(sim, sim.cwd);
+    return f && !!f.repo.branches[name];
+  }
+
+  function currentBranch(sim) {
+    const f = findRepo(sim, sim.cwd);
+    return f ? f.repo.head : null;
+  }
+
+  function branchHasCommits(sim, branch, minOnBranch) {
+    const f = findRepo(sim, sim.cwd);
+    if (!f) return false;
+    const tip = f.repo.branches[branch];
+    if (!tip) return false;
+    let count = 0;
+    let cur = tip;
+    while (cur) {
+      count++;
+      const c = f.repo.commits[cur];
+      if (c && c.branch === branch) cur = c.parent;
+      else break;
+    }
+    return count >= minOnBranch || Object.values(f.repo.commits).filter((c) => c.branch === branch).length >= minOnBranch;
+  }
+
+  function hasMergeCommit(sim) {
+    const f = findRepo(sim, sim.cwd);
+    if (!f) return false;
+    return Object.values(f.repo.commits).some((c) => c.parents && c.parents.length > 1);
+  }
+
+  function hintForError(msg) {
+    for (const [pattern, hint] of Object.entries(ERROR_HINTS)) {
+      if (new RegExp(pattern, "i").test(msg)) return hint;
+    }
+    return null;
+  }
+
   function clone(obj) {
     return JSON.parse(JSON.stringify(obj));
   }
@@ -137,6 +248,7 @@
       commits: {},
       commitSeq: 0,
       staging: {},
+      stash: [],
       lastError: null,
       lastHint: null,
     };
@@ -258,6 +370,11 @@
 
   class Simulator {
     constructor() {
+      this.cmdHistory = [];
+      this.historyIdx = -1;
+      this.activeMission = null;
+      this.missionStep = 0;
+      this.didResetOrRevert = false;
       this.reset(true);
       this.logEl = document.getElementById("sim-log");
       this.inputEl = document.getElementById("sim-input");
@@ -272,6 +389,9 @@
       this.cwd = HOME;
       this.repos = {};
       this.lines = [];
+      this.cmdHistory = [];
+      this.historyIdx = -1;
+      this.didResetOrRevert = false;
       this.lastError = null;
       this.lastHint =
         "Entorno reiniciado. Prueba: mkdir proyecto-comando → cd proyecto-comando → git init → echo hola > readme.txt → git add . → git commit -m \"Inicio\"";
@@ -282,8 +402,8 @@
       this.renderAll();
     }
 
-    print(text, cls) {
-      this.lines.push({ text, cls: cls || "out" });
+    print(text, cls, html) {
+      this.lines.push({ text: text || "", cls: cls || "out", html: html || null });
       if (this.lines.length > MAX_LOG) this.lines.shift();
     }
 
@@ -292,15 +412,62 @@
       this.renderExplorer();
       this.renderHelp();
       this.renderGitGraph();
+      this.renderMission();
+    }
+
+    renderMission() {
+      const panel = document.getElementById("sim-mission-panel");
+      const text = document.getElementById("sim-mission-text");
+      const bar = document.getElementById("sim-mission-bar");
+      if (!panel || !text || !bar) return;
+      if (!this.activeMission) {
+        panel.hidden = true;
+        return;
+      }
+      panel.hidden = false;
+      const m = MISSIONS.find((x) => x.id === this.activeMission);
+      if (!m) return;
+      const done = m.steps.filter((_, i) => i < this.missionStep).length;
+      const current = m.steps[this.missionStep];
+      if (this.missionStep >= m.steps.length) {
+        text.innerHTML = `${iconHtml(Icon.trophy)} ${escapeHtml(m.title)} — Completada`;
+        bar.style.width = "100%";
+        return;
+      }
+      text.textContent = `${m.title}: paso ${this.missionStep + 1}/${m.steps.length} — ${current.label}`;
+      bar.style.width = `${Math.round((done / m.steps.length) * 100)}%`;
+    }
+
+    checkMission() {
+      if (!this.activeMission) return;
+      const m = MISSIONS.find((x) => x.id === this.activeMission);
+      if (!m) return;
+      while (this.missionStep < m.steps.length && m.steps[this.missionStep].test(this)) {
+        this.missionStep++;
+        this.print(
+          "",
+          "system",
+          `${iconHtml(Icon.circleCheck, "sim-icon-ok")} Misión: paso completado (${this.missionStep}/${m.steps.length})`
+        );
+      }
+      if (this.missionStep >= m.steps.length) {
+        this.print(
+          "",
+          "system",
+          `${iconHtml(Icon.trophy, "sim-icon-ok")} Misión completada. Probá otra o seguí en modo libre.`
+        );
+        this.lastHint = "Misión completada. Exportá la sesión o elegí otra misión.";
+      }
+      this.renderMission();
     }
 
     renderTerminal() {
       if (!this.logEl) return;
       this.logEl.innerHTML = this.lines
-        .map(
-          (l) =>
-            `<div class="sim-line sim-line--${l.cls}">${escapeHtml(l.text).replace(/\n/g, "<br>")}</div>`
-        )
+        .map((l) => {
+          const content = l.html ? l.html : escapeHtml(l.text).replace(/\n/g, "<br>");
+          return `<div class="sim-line sim-line--${l.cls}">${content}</div>`;
+        })
         .join("");
       this.logEl.scrollTop = this.logEl.scrollHeight;
       if (this.promptEl) this.promptEl.textContent = this.cwd + ">";
@@ -314,8 +481,10 @@
         const isDir = node.type === "dir";
         const active = pathKey(this.cwd) === pathKey(fsPath);
         const cls = active ? "sim-tree-item sim-tree-item--active" : "sim-tree-item";
-        const icon = isDir ? "📁" : "📄";
-        let html = `<div class="${cls}" style="padding-left:${depth * 14}px">${icon} ${escapeHtml(name)}</div>`;
+        const icon = isDir
+          ? '<i class="fa-solid fa-folder tree-icon tree-icon--folder" aria-hidden="true"></i>'
+          : '<i class="fa-solid fa-file-lines tree-icon tree-icon--file" aria-hidden="true"></i>';
+        let html = `<div class="${cls}" style="padding-left:${depth * 14}px">${icon}<span class="tree-name">${escapeHtml(name)}</span></div>`;
         if (isDir && node.children) {
           for (const child of Object.keys(node.children).sort()) {
             html += renderNode(fsPath + "\\" + child, child, depth + 1);
@@ -370,7 +539,7 @@
 
     setError(msg, hint) {
       this.lastError = msg;
-      if (hint) this.lastHint = hint;
+      this.lastHint = hint || hintForError(msg) || this.lastHint;
       this.renderHelp();
     }
 
@@ -381,17 +550,35 @@
     run(rawLine) {
       const line = rawLine.trim();
       if (!line) return;
+      if (!this.cmdHistory.length || this.cmdHistory[this.cmdHistory.length - 1] !== line) {
+        this.cmdHistory.push(line);
+      }
+      this.historyIdx = this.cmdHistory.length;
       this.print(this.cwd + "> " + line, "cmd");
       this.clearError();
 
       try {
         const out = this.execute(line);
         if (out) this.print(out, "out");
+        this.checkMission();
       } catch (e) {
-        this.setError(String(e.message || e));
-        this.print("Error: " + (e.message || e), "err");
+        const msg = String(e.message || e);
+        this.setError(msg);
+        this.print("Error: " + msg, "err");
       }
       this.renderAll();
+    }
+
+    exportSession() {
+      const text = this.lines.map((l) => l.text).join("\n");
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `simulador-sesion-${new Date().toISOString().slice(0, 10)}.txt`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      this.lastHint = "Sesión exportada como archivo .txt";
+      this.renderHelp();
     }
 
     execute(line) {
@@ -459,7 +646,20 @@
         return null;
       }
 
-      this.setError(`Comando no reconocido: ${cmd}`, "Comandos disponibles: cd, dir, mkdir, echo, type, del, cls y todos los git ...");
+      if (cmd === "ren") {
+        const from = normalizePath(this.cwd, args[1]);
+        const toName = args[2];
+        if (!toName) throw new Error("Falta el nombre nuevo.");
+        const idx = from.lastIndexOf("\\");
+        const to = from.slice(0, idx + 1) + toName;
+        const res = readFile(this.fs, from);
+        if (res.error) throw new Error(res.error);
+        writeFile(this.fs, to, res.content);
+        deleteEntry(this.fs, from);
+        return null;
+      }
+
+      this.setError(`Comando no reconocido: ${cmd}`, hintForError("Comando no reconocido"));
       throw new Error(`Comando no reconocido: ${cmd}`);
     }
 
@@ -605,12 +805,64 @@
         return `Merge made: ${commit.id.slice(0, 7)}`;
       }
 
+      if (sub === "diff") {
+        const head = headCommit(repo);
+        const working = repoSnapshot(this, repoRoot);
+        const base = head ? head.snapshot : {};
+        const lines = [];
+        const paths = new Set([...Object.keys(base), ...Object.keys(working)]);
+        for (const p of [...paths].sort()) {
+          if (base[p] !== working[p]) {
+            lines.push(`diff --git a/${p} b/${p}`);
+            if (base[p] === undefined) lines.push(`+++ nuevo: ${p}`);
+            else if (working[p] === undefined) lines.push(`--- eliminado: ${p}`);
+            else lines.push(`@@ ${p} @@`, `- ${base[p]}`, `+ ${working[p]}`);
+          }
+        }
+        return lines.length ? lines.join("\n") : "(sin cambios)";
+      }
+
+      if (sub === "stash") {
+        const action = (args[1] || "push").toLowerCase();
+        if (action === "list") {
+          if (!repo.stash.length) return "(sin stashes)";
+          return repo.stash.map((s, i) => `stash@{${i}}: ${s.message}`).join("\n");
+        }
+        if (action === "pop" || action === "apply") {
+          if (!repo.stash.length) throw new Error("No hay entradas de stash.");
+          const entry = repo.stash.pop();
+          applySnapshot(this.fs, repoRoot, { ...entry.snapshot });
+          this.lastHint = "Stash aplicado. Los cambios volvieron al directorio de trabajo.";
+          return `Aplicado stash@{0}: ${entry.message}`;
+        }
+        const head = headCommit(repo);
+        const working = repoSnapshot(this, repoRoot);
+        repo.stash.push({ message: "WIP", snapshot: clone(working) });
+        if (head) applySnapshot(this.fs, repoRoot, head.snapshot);
+        else {
+          const repoNode = getNode(this.fs, repoRoot);
+          if (repoNode) repoNode.children = {};
+        }
+        this.lastHint = "Cambios guardados en stash. Recuperá con git stash pop.";
+        return "Cambios guardados en stash";
+      }
+
+      if (sub === "pull") {
+        this.lastHint = "Pull simulado: en la vida real trae cambios del remoto. Si hay conflictos, resolvelos archivo por archivo.";
+        return "Already up to date. (simulado)";
+      }
+
+      if (sub === "clone") {
+        throw new Error("git clone no está simulado aquí. Creá carpeta, cd y git init.");
+      }
+
       if (sub === "reset") {
         const hard = args.includes("--hard");
         const refArg = args[args.length - 1];
         const target = resolveCommitRef(repo, refArg);
         if (!target) throw new Error(`referencia ambigua o desconocida: ${refArg}`);
         repo.branches[repo.head] = target.id;
+        this.didResetOrRevert = true;
         if (hard) {
           applySnapshot(this.fs, repoRoot, target.snapshot);
           repo.staging = {};
@@ -626,6 +878,7 @@
         const refArg = args[1];
         const target = resolveCommitRef(repo, refArg);
         if (!target) throw new Error(`commit desconocido: ${refArg}`);
+        this.didResetOrRevert = true;
         const cur = headCommit(repo);
         const snap = clone(cur ? cur.snapshot : {});
         for (const [p, v] of Object.entries(target.snapshot)) snap[p] = v;
@@ -693,7 +946,41 @@
         sim.run(input.value);
         input.value = "";
       });
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          if (!sim.cmdHistory.length) return;
+          sim.historyIdx = Math.max(0, sim.historyIdx - 1);
+          input.value = sim.cmdHistory[sim.historyIdx] || "";
+        }
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          if (!sim.cmdHistory.length) return;
+          sim.historyIdx = Math.min(sim.cmdHistory.length, sim.historyIdx + 1);
+          input.value = sim.cmdHistory[sim.historyIdx] || "";
+        }
+      });
     }
+
+    const missionSelect = document.getElementById("sim-mission-select");
+    MISSIONS.forEach((m) => {
+      const opt = document.createElement("option");
+      opt.value = m.id;
+      opt.textContent = m.title;
+      missionSelect?.appendChild(opt);
+    });
+    missionSelect?.addEventListener("change", () => {
+      const id = missionSelect.value;
+      sim.activeMission = id || null;
+      sim.missionStep = 0;
+      if (id) {
+        sim.print(`Misión iniciada: ${MISSIONS.find((m) => m.id === id)?.title}`, "system");
+        sim.checkMission();
+      }
+      sim.renderMission();
+    });
+
+    document.getElementById("sim-btn-export")?.addEventListener("click", () => sim.exportSession());
 
     document.getElementById("sim-btn-reset")?.addEventListener("click", () => {
       if (confirm("¿Reiniciar todo el simulador? Se borrarán carpetas, archivos y repos Git simulados.")) {
