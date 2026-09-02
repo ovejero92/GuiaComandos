@@ -100,6 +100,8 @@ body {
 aside.sidebar {
   width: var(--sidebar-width);
   height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
   background: var(--sidebar-bg);
   color: white;
   position: fixed;
@@ -107,7 +109,10 @@ aside.sidebar {
   flex-direction: column;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
   z-index: 150;
+  overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .sidebar-brand {
@@ -205,7 +210,8 @@ aside.sidebar {
 }
 
 .sidebar-nav {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   padding: 8px 0;
 }
 
@@ -231,7 +237,9 @@ aside.sidebar {
 }
 
 .sidebar-footer {
+  flex-shrink: 0;
   padding: 16px 20px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -1202,10 +1210,27 @@ section#simulador.content-section {
   aside.sidebar {
     transform: translateX(-100%);
     transition: transform 0.3s ease;
+    width: min(var(--sidebar-width), 100vw);
+    padding-bottom: max(24px, env(safe-area-inset-bottom, 24px));
   }
 
   aside.sidebar.sidebar--open {
     transform: translateX(0);
+  }
+
+  /* En móvil: menú entero scrollea (el footer con Ko-fi no queda cortado) */
+  .sidebar-brand,
+  .sidebar-tools {
+    flex-shrink: 0;
+  }
+
+  .sidebar-nav {
+    flex: none;
+    min-height: auto;
+  }
+
+  .sidebar-footer {
+    padding-bottom: max(28px, env(safe-area-inset-bottom, 28px));
   }
 
   main {
