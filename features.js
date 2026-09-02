@@ -1,11 +1,7 @@
-/**
- * Tema, búsqueda, compartir, impresión, feedback y contenido dinámico extra.
- */
 (function () {
   const PAGE_URL = "https://ovejero92.github.io/GuiaComandos/";
   const PAGE_TITLE = "Guía de Comandos — CMD, PowerShell y Git";
 
-  /* ─── Tema claro / oscuro ─── */
   function initTheme() {
     const stored = localStorage.getItem("guia-theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -28,7 +24,6 @@
     btn.setAttribute("aria-label", theme === "dark" ? "Cambiar a tema claro" : "Cambiar a tema oscuro");
   }
 
-  /* ─── Búsqueda en vivo ─── */
   function initSearch() {
     const input = document.getElementById("global-search");
     const clear = document.getElementById("search-clear");
@@ -80,30 +75,27 @@
     window.__reindexSearch = indexCards;
   }
 
-  /* ─── Compartir ─── */
   function initShare() {
     document.getElementById("btn-share")?.addEventListener("click", async () => {
       const data = {
         title: PAGE_TITLE,
-        text: "Guía interactiva de CMD, PowerShell y Git con simulador de terminal.",
+        text: "Guía de CMD, PowerShell y Git (con simulador)",
         url: PAGE_URL,
       };
       if (navigator.share) {
         try {
           await navigator.share(data);
-        } catch (_) {
-          /* usuario canceló */
-        }
+        } catch (_) {}
       } else {
         copyText(PAGE_URL);
-        toast("Enlace copiado al portapapeles");
+        toast("Enlace copiado");
       }
     });
 
     document.querySelectorAll("[data-share]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const type = btn.getAttribute("data-share");
-        const text = encodeURIComponent("Guía de comandos CMD, PowerShell y Git con simulador:");
+        const text = encodeURIComponent("Mirá esta guía de comandos:");
         const url = encodeURIComponent(PAGE_URL);
         let href = "";
         if (type === "whatsapp") href = `https://wa.me/?text=${text}%20${url}`;
@@ -138,12 +130,10 @@
   }
   window.__toast = toast;
 
-  /* ─── Imprimir / PDF ─── */
   function initPrint() {
     document.getElementById("btn-print")?.addEventListener("click", () => window.print());
   }
 
-  /* ─── Menú móvil ─── */
   function initMobileNav() {
     const toggle = document.getElementById("sidebar-toggle");
     const aside = document.querySelector("aside.sidebar");
@@ -156,7 +146,6 @@
     });
   }
 
-  /* ─── Índice colapsable en sidebar ─── */
   function initNavGroups() {
     document.querySelectorAll(".nav-group-toggle").forEach((btn) => {
       const group = btn.closest(".nav-group");
@@ -171,7 +160,6 @@
     });
   }
 
-  /* ─── Feedback ─── */
   function initFeedback() {
     const form = document.getElementById("feedback-form");
     form?.addEventListener("submit", (e) => {
@@ -182,18 +170,16 @@
         `Nombre: ${fd.get("name") || "(sin nombre)"}\n\nMensaje:\n${fd.get("message")}`
       );
       window.location.href = `mailto:soi.gustavo19@gmail.com?subject=${subject}&body=${body}`;
-      toast("Se abrirá tu cliente de correo. Cambia el email en el código si eres el profe.");
+      toast("Se abre el mail para mandar la sugerencia");
     });
   }
 
-  /* ─── PWA ─── */
   function initPWA() {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("./sw.js").catch(() => {});
     }
   }
 
-  /* ─── Contenido dinámico: errores, comparativa, flujos, bash ─── */
   const COMMON_ERRORS = [
     {
       title: "fatal: not a git repository",

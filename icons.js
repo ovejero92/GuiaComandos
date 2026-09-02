@@ -1,7 +1,4 @@
-/**
- * Iconografía unificada con Font Awesome (sin emojis en la UI).
- * Uso: iconHtml("fa-copy") o setBtnIcon(button, "fa-moon", "Oscuro")
- */
+// iconos de font awesome
 const Icon = {
   copy: "fa-copy",
   check: "fa-check",

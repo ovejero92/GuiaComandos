@@ -1,7 +1,7 @@
 {
-  "name": "Guía de Comandos — CMD, PowerShell y Git",
+  "name": "Guía de Comandos",
   "short_name": "GuíaComandos",
-  "description": "Cheat sheet interactivo y simulador de terminal/Git para estudiantes.",
+  "description": "Comandos de CMD, PowerShell, Bash y Git.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#1a252f",

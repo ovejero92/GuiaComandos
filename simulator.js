@@ -1,6 +1,4 @@
-/**
- * Simulador de terminal + Git en entorno controlado (sin tocar el PC real).
- */
+// simulador de terminal y git (todo inventado en el navegador)
 (function () {
   const HOME = "C:\\Users\\Estudiante";
   const MAX_LOG = 200;
@@ -393,11 +391,11 @@
       this.historyIdx = -1;
       this.didResetOrRevert = false;
       this.lastError = null;
-      this.lastHint =
-        "Entorno reiniciado. Prueba: mkdir proyecto-comando → cd proyecto-comando → git init → echo hola > readme.txt → git add . → git commit -m \"Inicio\"";
+        this.lastHint =
+        "Reiniciado. Probá: mkdir proyecto-comando → cd proyecto-comando → git init → echo hola > readme.txt → git add . → git commit -m \"Inicio\"";
       if (showWelcome !== false) {
-        this.print("Simulador listo. Carpeta inicial vacía en C:\\Users\\Estudiante", "system");
-        this.print("Escribe comandos CMD/Git. Usa «¿Qué pasó?» si algo falla o «Reiniciar» para volver a cero.", "system");
+        this.print("Simulador listo. Estás en C:\\Users\\Estudiante (vacío)", "system");
+        this.print("Si algo falla usá «¿Qué pasó?» o «Reiniciar».", "system");
       }
       this.renderAll();
     }
@@ -889,7 +887,7 @@
         repo.staging = repoSnapshot(this, repoRoot);
         const commit = createCommit(repo, `Revert "${target.message}"`, repo.staging, [repo.branches[repo.head]]);
         this.lastHint =
-          "revert crea un commit NUEVO que deshace otro, sin borrar historial. Ideal cuando ya compartiste commits (push/PR). reset --hard reescribe la rama local.";
+          "revert hace un commit nuevo que deshace otro. Conviene si ya subiste a GitHub. reset --hard reescribe la rama local.";
         return `[${repo.head} ${commit.id.slice(0, 7)}] Revert "${target.message}"`;
       }
 

@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Guía interactiva de CMD, PowerShell, Bash y Git con simulador de terminal. Ideal para estudiantes.">
+    <meta name="description" content="Comandos de CMD, PowerShell, Bash y Git. Con un simulador para practicar.">
     <meta name="theme-color" content="#27ae60">
     <meta property="og:title" content="Guía de Comandos — CMD, PowerShell y Git">
-    <meta property="og:description" content="Cheat sheet con copiar al portapapeles y simulador Git sin riesgo.">
+    <meta property="og:description" content="Apuntes de terminal y Git con simulador.">
     <meta property="og:url" content="https://ovejero92.github.io/GuiaComandos/">
     <meta property="og:type" content="website">
     <title>Guía de Comandos | CMD, PowerShell, Bash y Git</title>
@@ -88,11 +88,10 @@
     </aside>
 
     <main id="main-content">
-        <!-- CMD, PowerShell, Git sections: contenido existente -->
         <section id="cmd" class="content-section active" data-section="cmd">
             <header class="section-header">
                 <h1>Comandos útiles de CMD</h1>
-                <p class="muted">Consola clásica de Windows. Usa el buscador del menú para filtrar.</p>
+                <p class="muted">Lo básico de la consola de Windows.</p>
             </header>
             <h3>Información y ayuda</h3>
             <div class="command-card" data-searchable>
@@ -221,7 +220,7 @@
         <section id="bash" class="content-section" data-section="bash">
             <header class="section-header">
                 <h1>Bash / Linux / WSL</h1>
-                <p class="muted">Comandos útiles en servidores, macOS o Windows Subsystem for Linux (WSL).</p>
+                <p class="muted">Para WSL, servidores o Linux.</p>
             </header>
             <div id="bash-root"></div>
         </section>
@@ -230,21 +229,21 @@
             <header class="section-header">
                 <h1>Git y GitHub</h1>
                 <p class="intro-callout intro-callout--git">
-                    Git guarda <strong>cambios</strong> en una línea de tiempo: carpeta → <em>staging</em> → <em>commit</em> → <em>push</em>.
+                    Git guarda cambios en commits. Flujo típico: carpeta → <em>add</em> → <em>commit</em> → <em>push</em>.
                 </p>
             </header>
             <h3>Enlaces</h3>
             <ul>
                 <li><a href="https://git-scm.com/" target="_blank" rel="noopener">Instalar Git</a></li>
                 <li><a href="https://github.com/" target="_blank" rel="noopener">GitHub</a></li>
-                <li><a href="https://learngitbranching.js.org/" target="_blank" rel="noopener">Learn Git Branching (extra visual)</a></li>
+                <li><a href="https://learngitbranching.js.org/" target="_blank" rel="noopener">Learn Git Branching</a></li>
             </ul>
             <h2 class="section-title-git">1. Referencia de comandos</h2>
-            <p class="muted">Usa el botón <i class="fa-solid fa-copy icon-inline" aria-hidden="true"></i> para copiar y <i class="fa-solid fa-chevron-down icon-inline" aria-hidden="true"></i> para ver la descripción de cada comando.</p>
+            <p class="muted">Copiá con el botón y abrí la descripción con la flechita.</p>
             <div id="git-ref-root"></div>
             <div id="git-interactive-zone" class="git-interactive-zone">
                 <h2 class="section-title-git">2. Guía visual (scroll + gráfico)</h2>
-                <p class="muted">El panel derecho muestra commits y ramas según el paso visible.</p>
+                <p class="muted">Mientras scrolleás, el panel de la derecha se va actualizando.</p>
                 <div class="git-interactive-layout">
                     <div class="git-interactive-scroll">
                         <h3 class="git-track-title">A. Subir proyecto a GitHub</h3>
@@ -306,7 +305,7 @@
         <section id="errores" class="content-section" data-section="errores">
             <header class="section-header">
                 <h1>Errores comunes y soluciones</h1>
-                <p class="muted">Lo que más aparece en clase y cómo salir del paso.</p>
+                <p class="muted">Errores que suelen salir en clase y cómo salir.</p>
             </header>
             <div id="errores-root"></div>
         </section>
@@ -314,7 +313,7 @@
         <section id="flujos" class="content-section" data-section="flujos">
             <header class="section-header">
                 <h1>Flujos reales de clase</h1>
-                <p class="muted">Pasos completos para TPs, clonar repos y conflictos.</p>
+                <p class="muted">Pasos para el TP, clonar el repo del profe y pelearse con un conflicto.</p>
             </header>
             <div id="flujos-root"></div>
         </section>
@@ -322,7 +321,7 @@
         <section id="comparativa" class="content-section" data-section="comparativa">
             <header class="section-header">
                 <h1>CMD vs PowerShell vs Bash</h1>
-                <p class="muted">La misma tarea en tres entornos.</p>
+                <p class="muted">Misma cosa, tres formas distintas.</p>
             </header>
             <div id="comparativa-root"></div>
         </section>
@@ -330,7 +329,7 @@
         <section id="simulador" class="content-section content-section--wide" data-section="simulador">
             <header class="section-header">
                 <h1>Simulador de terminal y Git</h1>
-                <p class="intro-callout intro-callout--sim">Entorno <strong>simulado</strong>: practicá sin riesgo. Flechas ↑↓ para historial. Exportá la sesión al terminar.</p>
+                <p class="intro-callout intro-callout--sim">Simulador: podés romper cosas sin miedo. Flechas ↑↓ = historial. Si se te complica, reiniciá.</p>
             </header>
             <div class="sim-toolbar">
                 <label class="sim-mission-select">
@@ -419,21 +418,17 @@
                     <label>Nombre (opcional)<input type="text" name="name" placeholder="Tu nombre" /></label>
                     <label>Mensaje<textarea name="message" rows="4" required placeholder="Comandos, errores o temas que quieras ver..."></textarea></label>
                     <button type="submit" class="link-as-button">Enviar sugerencia por email</button>
-                    <p class="muted small">Configura tu email en <code class="inline-code">features.js</code> (initFeedback).</p>
                 </form>
             </div>
             <div class="info-card ad-slot" data-searchable>
                 <h3 class="info-card__title">Apoyo al proyecto</h3>
-                <p class="muted">Podés agregar un banner discreto de AdSense o Ko-fi. GitHub Pages permite donaciones y links de afiliados si el foco sigue siendo educativo.</p>
-                <!-- AdSense: cuando te aprueben, pegá el código de Google acá y borrá este comentario.
-                <div class="ad-placeholder">Espacio publicitario</div>
-                -->
+                <p class="muted">Si te sirve la guía, podés invitarme un café con el botón del menú.</p>
             </div>
         </section>
 
         <footer class="site-footer">
-            <p>Guía de Comandos — Material educativo · <a href="https://github.com/ovejero92/GuiaComandos" target="_blank" rel="noopener">GitHub</a></p>
-            <p class="muted small">Tip: en el celular, «Agregar a pantalla de inicio» para usarla como app (PWA).</p>
+            <p>Guía de Comandos · <a href="https://github.com/ovejero92/GuiaComandos" target="_blank" rel="noopener">GitHub</a></p>
+            <p class="muted small">En el celu: agregala a la pantalla de inicio y se usa casi como una app.</p>
         </footer>
     </main>
 

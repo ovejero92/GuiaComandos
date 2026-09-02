@@ -1,4 +1,3 @@
-/** Navegación por pestañas (compatible sin depender de `event` global) */
 function openSection(id, buttonEl) {
   document.querySelectorAll(".content-section").forEach((s) => s.classList.remove("active"));
   document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
@@ -14,10 +13,7 @@ function openSection(id, buttonEl) {
   }
 }
 
-/**
- * Estados del gráfico Git: nodos (commits), aristas parent→child, punteros de rama, HEAD.
- * `inactiveNodeIds` = commits “perdidos” del historial visible (p. ej. tras reset).
- */
+// estados del dibujo de git (commits / ramas)
 const GIT_GRAPH_STATES = {
   "linear-0": {
     title: "Repositorio nuevo",
@@ -206,13 +202,11 @@ const BRANCH_COLORS = {
   feature: "#9b59b6",
 };
 
-/** Misma figura para pasos distintos del texto (evita ambigüedad al hacer scroll). */
 const GIT_VIZ_ALIASES = {
   "linear-3-remote": "linear-3",
   "linear-3-log": "linear-3",
 };
 
-/** Texto del panel cuando varios pasos comparten la misma figura. */
 const GIT_GRAPH_COPY = {
   "linear-3-remote": {
     title: "Conectar con GitHub y subir",
@@ -341,7 +335,6 @@ function initGitScrollViz() {
   if (!steps.length) return;
 
   let current = null;
-  /** Zona de lectura: elegimos el paso cuyo centro está más cerca de esta franja. */
   const focusY = () => window.innerHeight * 0.38;
 
   const pickStep = () => {
@@ -402,8 +395,6 @@ document.addEventListener("DOMContentLoaded", () => {
   enhanceAllCommandBlocks();
   if (window.__reindexSearch) window.__reindexSearch();
 });
-
-/* ─── Copiar comandos (texto limpio, sin el prefijo >) ─── */
 
 function copyText(text, btn) {
   const clean = text.trim();
@@ -491,8 +482,6 @@ function enhanceAllCommandBlocks() {
   });
 }
 
-/* ─── Referencia Git con descripciones ─── */
-
 const GIT_REF_SECTIONS = [
   {
     title: "Configuración e identidad",
@@ -508,10 +497,10 @@ const GIT_REF_SECTIONS = [
     commands: [
       { cmd: "git init", desc: "Convierte la carpeta actual en repositorio Git (crea la carpeta oculta .git)." },
       { cmd: "git status", desc: "Resume archivos modificados, en staging y sin seguimiento." },
-      { cmd: "git status -s", desc: "Misma información en formato corto (ideal para escaneo rápido)." },
-      { cmd: "git add archivo.txt", desc: "Envía un archivo concreto al área de staging (preparación)." },
-      { cmd: "git add .", desc: "Añade todos los cambios pendientes del directorio al staging." },
-      { cmd: 'git commit -m "mensaje"', desc: "Guarda una instantánea del staging en el historial con un mensaje." },
+      { cmd: "git status -s", desc: "Igual que status pero más corto." },
+      { cmd: "git add archivo.txt", desc: "Pasa un archivo al staging." },
+      { cmd: "git add .", desc: "Agrega todos los cambios pendientes." },
+      { cmd: 'git commit -m "mensaje"', desc: "Guarda los cambios del staging con un mensaje." },
       { cmd: "git log", desc: "Lista commits con autor, fecha e ID completo." },
       { cmd: "git log --oneline --graph --decorate --all", desc: "Historial compacto con ramas y fusiones dibujadas en texto." },
     ],
@@ -529,7 +518,7 @@ const GIT_REF_SECTIONS = [
       },
       {
         cmd: "git revert <commit>",
-        desc: "Crea un commit nuevo que deshace otro, sin reescribir historial. Preferido si ya hiciste push o trabajas en equipo.",
+        desc: "Crea un commit nuevo que deshace otro. Mejor si ya hiciste push o laburás en equipo.",
       },
     ],
   },
@@ -537,37 +526,37 @@ const GIT_REF_SECTIONS = [
     title: "Ramas",
     commands: [
       { cmd: "git branch", desc: "Lista ramas locales; la activa lleva asterisco (*)." },
-      { cmd: "git branch nombre", desc: "Crea una rama nueva apuntando al commit actual (no cambia HEAD)." },
-      { cmd: "git switch nombre", desc: "Cambia a otra rama (actualiza archivos del directorio de trabajo)." },
-      { cmd: "git switch -c nombre", desc: "Crea la rama y cambia a ella en un solo paso." },
-      { cmd: "git checkout nombre", desc: "Forma clásica de cambiar de rama (equivalente a switch en casos simples)." },
-      { cmd: "git merge nombre", desc: "Integra otra rama en la rama actual (puede crear commit de merge)." },
-      { cmd: "git branch -d nombre", desc: "Borra rama ya fusionada (solo el puntero, no los commits alcanzables)." },
-      { cmd: "git branch -D nombre", desc: "Fuerza borrado de rama aunque no esté fusionada." },
+      { cmd: "git branch nombre", desc: "Crea una rama nueva (no te cambia a ella)." },
+      { cmd: "git switch nombre", desc: "Cambia a otra rama." },
+      { cmd: "git switch -c nombre", desc: "Crea la rama y entra a ella." },
+      { cmd: "git checkout nombre", desc: "Forma vieja de cambiar de rama (parecido a switch)." },
+      { cmd: "git merge nombre", desc: "Une otra rama con la que estás parado." },
+      { cmd: "git branch -d nombre", desc: "Borra una rama ya mergeada." },
+      { cmd: "git branch -D nombre", desc: "Borra la rama igual, aunque no esté mergeada." },
     ],
   },
   {
     title: "Remoto (GitHub)",
     commands: [
-      { cmd: "git clone https://github.com/usuario/repo.git", desc: "Descarga un repo completo con historial y remoto origin." },
-      { cmd: "git remote -v", desc: "Lista URLs de remotos configurados (fetch/push)." },
-      { cmd: "git remote add origin https://github.com/usuario/repo.git", desc: "Vincula tu repo local con uno vacío en GitHub." },
-      { cmd: "git fetch origin", desc: "Trae commits y ramas del remoto sin fusionarlos aún." },
-      { cmd: "git pull origin main", desc: "Descarga y fusiona cambios de main en tu rama actual." },
-      { cmd: "git pull --rebase origin main", desc: "Aplica tus commits encima de los del remoto (historial más lineal)." },
-      { cmd: "git push -u origin main", desc: "Sube commits y deja main local enlazada con origin/main." },
-      { cmd: "git push origin --delete rama-remota", desc: "Elimina una rama en GitHub (tras mergear un PR, por ejemplo)." },
+      { cmd: "git clone https://github.com/usuario/repo.git", desc: "Baja un repo completo." },
+      { cmd: "git remote -v", desc: "Muestra los remotos configurados." },
+      { cmd: "git remote add origin https://github.com/usuario/repo.git", desc: "Conecta tu repo local con uno de GitHub." },
+      { cmd: "git fetch origin", desc: "Trae cambios del remoto sin mergear." },
+      { cmd: "git pull origin main", desc: "Baja y mezcla los cambios de main." },
+      { cmd: "git pull --rebase origin main", desc: "Baja cambios y pone tus commits encima." },
+      { cmd: "git push -u origin main", desc: "Sube commits (la primera vez con -u)." },
+      { cmd: "git push origin --delete rama-remota", desc: "Borra una rama en GitHub." },
     ],
   },
   {
     title: "Avanzado (muy útil)",
     commands: [
-      { cmd: "git stash", desc: "Guarda cambios locales temporalmente para cambiar de rama limpio." },
-      { cmd: "git stash pop", desc: "Recupera el último stash y lo elimina de la pila." },
-      { cmd: "git stash list", desc: "Muestra stashes guardados." },
-      { cmd: "git cherry-pick <commit>", desc: "Copia un commit concreto a la rama actual." },
-      { cmd: "git tag v1.0.0", desc: "Marca un punto importante del historial (release)." },
-      { cmd: "git show <commit>", desc: "Detalle de un commit: autor, fecha y diff." },
+      { cmd: "git stash", desc: "Guarda cambios a medias para cambiar de rama limpio." },
+      { cmd: "git stash pop", desc: "Trae de vuelta el último stash." },
+      { cmd: "git stash list", desc: "Lista los stashes." },
+      { cmd: "git cherry-pick <commit>", desc: "Copia un commit a tu rama actual." },
+      { cmd: "git tag v1.0.0", desc: "Marca un punto del historial (tipo release)." },
+      { cmd: "git show <commit>", desc: "Detalle de un commit." },
     ],
   },
 ];
