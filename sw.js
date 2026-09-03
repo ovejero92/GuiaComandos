@@ -1,12 +1,12 @@
-const CACHE = "guia-comandos-v2";
+const CACHE = "guia-comandos-v3";
 const ASSETS = [
   "./",
   "./index.html",
-  "./index.css",
-  "./icons.js",
-  "./index.js",
-  "./features.js",
-  "./simulator.js",
+  "./css/styles.css",
+  "./js/icons.js",
+  "./js/index.js",
+  "./js/features.js",
+  "./js/simulator.js",
   "./manifest.webmanifest",
   "./assets/icon.svg",
 ];
